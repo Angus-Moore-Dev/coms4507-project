@@ -1,0 +1,166 @@
+﻿<mah:MetroWindow x:Class="Coms4507_Project.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:Coms4507_Project"
+                 Title=""
+                 Width="1600"
+                 Height="900"
+                 WindowStartupLocation="CenterScreen"
+                 mc:Ignorable="d">
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Image Source="./images/logoTopLeft.png"></Image>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <Grid Background="#080000">
+        <!--  Your content  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.1*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="0.4*"></RowDefinition>
+            <RowDefinition Height="0.25*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="796*"></ColumnDefinition>
+            <ColumnDefinition Width="690*"></ColumnDefinition>
+            <ColumnDefinition Width="107*"/>
+        </Grid.ColumnDefinitions>
+        <!--Academic Disclaimer-->
+        <Label Content="ACADEMIC USE ONLY" Foreground="White" FontSize="24" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
+        <!--Bot Status-->
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.33*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="DarkRed" BorderThickness="2px" Background="DarkRed">
+                <TextBlock Grid.Row="0" FontFamily="Arial Black" FontSize="24" Padding="100px 0 0 0" Foreground="White" VerticalAlignment="Center" FontStretch="Condensed">
+                Bot Status
+                </TextBlock>
+            </Border>
+
+            <StackPanel Grid.Row="1" x:Name="BOT_STATUS_ROW_1">
+
+            </StackPanel>
+            <StackPanel Grid.Row="2" x:Name="BOT_STATUS_ROW_2">
+
+            </StackPanel>
+            <StackPanel Grid.Row="3" x:Name="BOT_STATUS_ROW_3">
+
+            </StackPanel>
+            <StackPanel Grid.Row="4" x:Name="BOT_STATUS_ROW_4">
+
+            </StackPanel>
+        </Grid>
+        <!--Attack panel-->
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="50"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical">
+                <Button x:Name="SYN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SYN FLOOD" Height="50" FontSize="14"/>
+                <Button x:Name="XMAS_FLOOD" Background="#0e0e0e" Foreground="White" Content="XMAS FLOOD" Height="50" FontSize="14"/>
+                <Button x:Name="PING_FLOOD" Background="#0e0e0e" Foreground="White" Content="PING FLOOD" Height="50" FontSize="14"/>
+                <Button x:Name="UDP_FLOOD" Background="#0e0e0e" Foreground="White" Content="UDP FLOOD" Height="50" FontSize="14"/>
+                <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="14"/>
+                <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="14"/>
+                <!--IP Address section-->
+                <Label Content="IP Address" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
+                <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
+                <Label Content="Runtime (in seconds, or * for endless)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
+                <TextBox x:Name="RUNTIME" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
+            </StackPanel>
+            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" />
+            <Grid Grid.Column="1" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="Terminal Output" Foreground="White" FontSize="24" FontWeight="Bold" Background="DarkRed" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
+                <TextBlock Grid.Row="1" x:Name="TERMINAL_OUTPUT_BOTS" Background="#250000" VerticalAlignment="Stretch"/>
+            </Grid>
+        </Grid>
+        <!--IP and other personal C2 data.-->
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="C2 IP Address (Your IP)" Background="DarkRed" Foreground="White" />
+                <Grid Grid.Row="1" Background="#1f1f1f">
+                    <Label x:Name="C2_SERVER_IP" Background="#1f1f1f" Foreground="White" FontSize="36" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </Grid>
+
+            </Grid>
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="C2 Attack Status" Background="DarkRed" Foreground="White" />
+                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontSize="24"/>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="Bot Exceptions Thrown" Background="DarkRed" Foreground="White" />
+                <TextBlock Grid.Row="1" x:Name="C2_EXCEPTIONS_THROWN" Background="#1f1f1f" Foreground="White" FontSize="24" />
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="Total Bot Bandwidth" Background="DarkRed" Foreground="White" />
+                <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontSize="24" />
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Label Grid.Row="0" Foreground="White" Content="Active Attack Map Dashboard" Background="DarkRed" />
+            <StackPanel Grid.Row="1" x:Name="ACTIVE_ATTACK_MAP_ROW_1" Orientation="Horizontal" />
+            <StackPanel Grid.Row="2" x:Name="ACTIVE_ATTACK_MAP_ROW_2" Orientation="Horizontal" />
+            <StackPanel Grid.Row="3" x:Name="ACTIVE_ATTACK_MAP_ROW_3" Orientation="Horizontal" />
+            <StackPanel Grid.Row="4" x:Name="ACTIVE_ATTACK_MAP_ROW_4" Orientation="Horizontal" />
+        </Grid>
+        <Grid Grid.Row="3" Grid.Column="0">
+            <StackPanel Orientation="Vertical">
+                <Label Content="COMS4507 Project 2022" FontSize="24" Foreground="White" Background="#250000" FontWeight="DemiBold"/>
+                <Label Content="Group Members: [Angus Moore, Larry Bain, Sam Guarrera, Lachie Daly]" FontSize="18" Foreground="White"/>
+                <Label Content="This C2 Server is for academic purposes only." FontSize="24" Foreground="White"/>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+            <Image Stretch="Fill" Source="./images/SplashScreen.png"></Image>
+        </Grid>
+    </Grid>
+</mah:MetroWindow>
