@@ -1,0 +1,81 @@
+package athena.nameserver.handler.lookup;
+
+import BotHandling.Bot;
+import BotHandling.BotHandler;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+@RestController
+@RequestMapping("/api/lookup/")
+public class LookupController
+{
+    Logger logger = Logger.getLogger(String.valueOf(LookupController.class));
+    BotHandler botHandler;
+
+    public LookupController()
+    {
+        botHandler = new BotHandler();
+    }
+
+    /**
+     * Updates the bot with the nameserver.
+     * @param botDetails the bot details (id, ip, port)
+     * @return String containing botId::updated
+     * @throws ParseException in case of a failed Parse
+     */
+    @CrossOrigin
+    @PostMapping("bot/update")
+    public String updateBot(@RequestBody String botDetails) throws ParseException {
+        JSONObject jsonObject = (JSONObject) new JSONParser().parse(botDetails);
+        String botId = jsonObject.get("id").toString();
+        String ip = jsonObject.get("ip").toString();
+        String portNum = jsonObject.get("port").toString();
+        botHandler.botPing(botId, ip, portNum);
+        return botId + "::updated";
+    }
+
+    /**
+     * Find the IP address of the bot.
+     * @param bot_id the id name of the bot
+     * @return JSONObject containing the whereabouts of the bot.
+     */
+    @CrossOrigin
+    @GetMapping("bot/{bot_id}")
+    public String getBotIPAddress(@PathVariable String bot_id)
+    {
+        if (!botHandler.botInSystem(bot_id))
+            return "not_found::not_found";
+        if (botHandler.getActiveBot(bot_id) != null)
+        {
+            Bot bot = botHandler.getActiveBot(bot_id);
+            return bot.ipAddress() + "::" + bot.portNumber();
+        } else
+        {
+            return "not_active::not_active";
+        }
+    }
+
+    /**
+     * Gets all the bots in the system, with their corresponding status.
+     * @return String containing a list of all the bots.
+     */
+    @CrossOrigin
+    @GetMapping("bot")
+    public String getAllBots()
+    {
+        List<String> botList = new ArrayList<>();
+        for (Bot bot: botHandler.getAllActiveBots())
+        {
+            String output = bot.id() + "::" + bot.ipAddress() + "::" + bot.portNumber();
+            botList.add(output);
+        }
+        return botList.toString();
+    }
+}
