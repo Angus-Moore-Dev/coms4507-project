@@ -30,7 +30,7 @@ namespace Coms4507_Project.BotHandling
                 Trace.WriteLine("WEBSERVER LISTENING.");
                 while (true)
                 {
-                    string message = WaitForMessage();
+                    string message = WaitForMessage().Replace("\n", "");
                     Trace.WriteLine("MESSAGE", message);
                 }
             };
