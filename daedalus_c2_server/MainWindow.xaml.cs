@@ -28,13 +28,15 @@ namespace Coms4507_Project
     public partial class MainWindow
     {
         BotHandler botHandler;
+        private string ip;
         public MainWindow()
         {
             InitializeComponent();
             // All custom stuff here.
+            Initialise();
+
             botHandler = new BotHandler();
 
-            Initialise();
         }
 
 
@@ -48,6 +50,7 @@ namespace Coms4507_Project
             string externalIpString = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
             string externalIp = IPAddress.Parse(externalIpString).ToString();
             C2_SERVER_IP.Content = externalIp;
+            ip = externalIp;
         }
     }
 }

