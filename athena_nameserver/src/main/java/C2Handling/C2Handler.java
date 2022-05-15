@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class C2Handler {
     Logger logger = Logger.getLogger(String.valueOf(C2Handler.class));
     private C2 activeC2;
-    private Long c2LastRequest;
+    private Long c2LastRequest = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 
     public C2Handler() {
         activeC2 = null;
@@ -16,7 +16,7 @@ public class C2Handler {
             while(true) {
                 try {
                     long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-                    if (currentTime - c2LastRequest > 30) {
+                    if ((activeC2 != null) && currentTime - c2LastRequest > 30) {
                         activeC2 = null;
                         logger.info("DELETED C2: " + activeC2.ip() + " AT TIME: " + currentTime);
                     }
