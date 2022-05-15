@@ -1,1 +1,1 @@
-API_URL = 'https://athena-nameserver.herokuapp.com'
+API_URL = 'https://athena-nameserver-v2.herokuapp.com'

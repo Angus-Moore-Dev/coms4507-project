@@ -26,6 +26,7 @@ public class C2Handler {
                 }
             }
         }).start();
+        logger.info("C2 COMPONENT UP AND RUNNING");
     }
 
     /**
