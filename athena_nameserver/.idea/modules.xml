@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/athena_nameserver.iml" filepath="$PROJECT_DIR$/.idea/athena_nameserver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Athena Nameserver.iml" filepath="$PROJECT_DIR$/Athena Nameserver.iml" />
     </modules>
   </component>
 </project>
