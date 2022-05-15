@@ -54,6 +54,8 @@ public class LookupController
     @GetMapping("c2")
     public String getC2IpAddress() {
         C2 c2 = c2Handler.getActiveC2();
+        if (c2 == null)
+            return "not_active::not_active";
         return c2.ip() + "::" + c2.portNum();
     }
 
