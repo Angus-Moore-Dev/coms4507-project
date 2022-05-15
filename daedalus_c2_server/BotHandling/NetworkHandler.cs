@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,13 +13,30 @@ namespace Coms4507_Project.BotHandling
     internal class NetworkHandler
     {
         private readonly UdpClient udpClient;
-        private readonly int portNumber = 45920;
+        private readonly int portNumber = 25565;
         private IPEndPoint endpoint;
 
         public NetworkHandler()
         {
             udpClient = new UdpClient(portNumber);
-            endpoint = new IPEndPoint(IPAddress.Any, portNumber);
+            // Will listen on the inner network, where the port forwarding has been setup.
+            // Therefore, we don't need to specify the IP address, as it's listening on all interfaces,
+            // including 192.168.0.190 (Angus' computer IP)
+            endpoint = new IPEndPoint(IPAddress.Parse("192.168.0.190"), portNumber); // endpoint where server is listening
+
+
+            Action<object> task = (object obj) =>
+            {
+                Trace.WriteLine("WEBSERVER LISTENING.");
+                while (true)
+                {
+                    string message = WaitForMessage();
+                    Trace.WriteLine("MESSAGE", message);
+                }
+            };
+            Task task1 = new Task(task, "task");
+            task1.Start();
+            
         }
 
         /// <summary>

@@ -33,21 +33,9 @@ namespace Coms4507_Project
             InitializeComponent();
             // All custom stuff here.
             botHandler = new BotHandler();
-
-            Initialise();
         }
 
 
-        public void Initialise()
-        {
-            GetIPAddress();
-        }
-
-        private void GetIPAddress()
-        {
-            string externalIpString = new WebClient().DownloadString("http://icanhazip.com").Replace("\\r\\n", "").Replace("\\n", "").Trim();
-            string externalIp = IPAddress.Parse(externalIpString).ToString();
-            C2_SERVER_IP.Content = externalIp;
-        }
+       
     }
 }

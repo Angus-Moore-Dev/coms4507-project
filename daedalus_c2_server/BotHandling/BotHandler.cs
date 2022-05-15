@@ -28,8 +28,8 @@ namespace Coms4507_Project.BotHandling
         {
             bots = new List<string>();
             networkHandler = new NetworkHandler();
-            Thread thread = new Thread(Listener);
-            thread.Start();
+            //Thread thread = new Thread(Listener);
+            //thread.Start();
         }
 
         private void LoadBotIDs()
