@@ -70,19 +70,19 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical">
-                <Button x:Name="SYN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SYN FLOOD" Height="50" FontSize="14"/>
-                <Button x:Name="XMAS_FLOOD" Background="#0e0e0e" Foreground="White" Content="XMAS FLOOD" Height="50" FontSize="14"/>
-                <Button x:Name="PING_FLOOD" Background="#0e0e0e" Foreground="White" Content="PING FLOOD" Height="50" FontSize="14"/>
-                <Button x:Name="UDP_FLOOD" Background="#0e0e0e" Foreground="White" Content="UDP FLOOD" Height="50" FontSize="14"/>
-                <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="14"/>
-                <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="14"/>
+                <Button x:Name="SYN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SYN FLOOD" Height="50" FontSize="14" Click="SYN_FLOOD_Click"/>
+                <Button x:Name="XMAS_FLOOD" Background="#0e0e0e" Foreground="White" Content="XMAS FLOOD" Height="50" FontSize="14" Click="XMAS_FLOOD_Click"/>
+                <Button x:Name="PING_FLOOD" Background="#0e0e0e" Foreground="White" Content="PING FLOOD" Height="50" FontSize="14" Click="PING_FLOOD_Click"/>
+                <Button x:Name="UDP_FLOOD" Background="#0e0e0e" Foreground="White" Content="UDP FLOOD" Height="50" FontSize="14" Click="UDP_FLOOD_Click"/>
+                <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="14" Click="SCAN_FLOOD_Click"/>
+                <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="14" Click="BANDWIDTH_DDOS_Click"/>
                 <!--IP Address section-->
                 <Label Content="IP Address" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
                 <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
-                <Label Content="Runtime (in seconds, or * for endless)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
-                <TextBox x:Name="RUNTIME" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
+                <Label Content="Ports to Attack (comma separated)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
+                <TextBox x:Name="PORTS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
             </StackPanel>
-            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" />
+            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" Click="ATTACK_BUTTON_Click" />
             <Grid Grid.Column="1" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"></RowDefinition>

