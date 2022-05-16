@@ -16,9 +16,9 @@ public class C2Handler {
             while(true) {
                 try {
                     long currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
-                    if ((activeC2 != null) && currentTime - c2LastRequest > 30) {
-                        activeC2 = null;
+                    if ((activeC2 != null) && currentTime - c2LastRequest > 10) {
                         logger.info("DELETED C2: " + activeC2.ip() + " AT TIME: " + currentTime);
+                        activeC2 = null;
                     }
                     Thread.sleep(250);
                 } catch (InterruptedException e) {
