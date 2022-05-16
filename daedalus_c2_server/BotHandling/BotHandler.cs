@@ -24,10 +24,11 @@ namespace Coms4507_Project.BotHandling
     {
         private readonly NetworkHandler networkHandler; // All interactions with bots is done through here.
         private List<string> bots; // Used to gather all the bots.
-        public BotHandler()
+        private string ip;
+        public BotHandler(string ip)
         {
             bots = new List<string>();
-            networkHandler = new NetworkHandler();
+            networkHandler = new NetworkHandler(ip);
             Thread thread = new Thread(Listener);
             thread.Start();
         }
@@ -44,18 +45,21 @@ namespace Coms4507_Project.BotHandling
                 {
                     // We just loop over this over and over and wait for a message
                     Trace.WriteLine("waiting");
-                    string message = networkHandler.WaitForMessage();
-                    JObject jData = JsonConvert.DeserializeObject<JObject>(message);
-                    
+                    Dictionary<string, string> message = networkHandler.WaitForMessage();
+
+                    //JObject jData = JsonConvert.DeserializeObject<JObject>(message);
+
                     // All bots provide this information.
-                    string ip = jData.GetValue("ip").ToString();
-                    string hostID = jData.GetValue("id").ToString();
-                    string status = jData.GetValue("status").ToString();
-                   
+                    //string ip = jData.GetValue("ip").ToString();
+                    //string hostID = jData.GetValue("id").ToString();
+                    //string status = jData.GetValue("status").ToString();
+                    Trace.WriteLine(message["payload"] + "::" + message["ip"] + "::" + message["port"]);
+                    networkHandler.SendMessage(message["payload"], message["ip"], message["port"]);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     // We should just ignore it.
+                    Trace.WriteLine(ex.Message);
                 }
             }
         }
