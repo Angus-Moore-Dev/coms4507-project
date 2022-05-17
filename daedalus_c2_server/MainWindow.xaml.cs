@@ -104,11 +104,17 @@ namespace Coms4507_Project
                         });
                     }
 
+                    // Go a
                     foreach (string botName in listOfAllBots)
                     {
-                        if (botHandler.botIpPortDetails[botName] == null)
+                        if (!botHandler.botIpPortDetails.ContainsKey(botName))
                         {
-
+                            Dispatcher.Invoke(() =>
+                            {
+                                Label result = FindName($"{botName}_STATUS") as Label;
+                                result.Content = "OFFLINE";
+                                result.Foreground = new SolidColorBrush(Colors.Red);
+                            });
                         }
                     }
 

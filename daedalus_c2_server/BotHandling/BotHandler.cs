@@ -54,7 +54,7 @@ namespace Coms4507_Project.BotHandling
                     // We check that if any bot in the list hasn't responded in 5 seconds, they are considered offline.
                     foreach (string botName in botIpPortDetails.Keys)
                     {
-                        if (DateTimeOffset.Now.ToUnixTimeSeconds() - botIdUnixTimestamp[botName] > 5)
+                        if (DateTimeOffset.Now.ToUnixTimeSeconds() - botIdUnixTimestamp[botName] > 4)
                         {
                             _ = botIpPortDetails.Remove(botName);
                             _ = botIdUnixTimestamp.Remove(botName);
