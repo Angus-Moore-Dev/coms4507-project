@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Coms4507_Project.BotHandling;
 /**
@@ -20,6 +24,29 @@ namespace Coms4507_Project
         private string ip;
         private string attackType;
         private BrushConverter bc = new BrushConverter();
+        List<string> listOfAllBots;
+        private static readonly List<string> allBots = new List<string>()
+        {
+            "ANGRYORACLE",
+            "ISLANDOASIS",
+            "ARKFOLLOWER",
+            "ENDUESCALLOP",
+            "MOTHBED",
+            "MAESTRO",
+            "DECKLEAK",
+            "DIXIE_IX",
+            "CONTRASTEED",
+            "JETMOSES",
+            "DESPERADO_XIX",
+            "GENESISJEEP",
+            "RESERVEPEARL",
+            "FRUGALSCALLOP",
+            "GILGAMESHBED",
+            "SLAW_VIII",
+            "ATLAS_XV",
+            "ULTRASTEED",
+            "RAGESHOP",
+        };
         public MainWindow()
         {
             InitializeComponent();
@@ -27,6 +54,9 @@ namespace Coms4507_Project
             Initialise();
             botHandler = new BotHandler(ip);
             attackType = "NONE";
+            listOfAllBots = new List<string>();
+            // Start the updater.
+            UpdateOnlineStatus();
         }
 
 
@@ -52,12 +82,37 @@ namespace Coms4507_Project
             {
                 while(true)
                 {
+                    Thread.Sleep(250);
+                    Trace.WriteLine("UPDATING BOT FOR THE UI");
+
+                    
+
                     // Go through and invoke the dispatcher for update on the colours.
                     foreach (string botName in botHandler.botIpPortDetails.Keys)
                     {
-                        // TODO: change the colour if it equals each one. Currently I have no
-                        // way of dynamically doing this, but if there is a way I would greatly appreciate it.
+                        if (!listOfAllBots.Contains(botName))
+                        {
+                            listOfAllBots.Add(botName);
+                        }
+                        Trace.WriteLine(botName);
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            Label result = FindName($"{botName}_STATUS") as Label;
+                            result.Content = "ONLINE";
+                            result.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                        });
                     }
+
+                    foreach (string botName in listOfAllBots)
+                    {
+                        if (botHandler.botIpPortDetails[botName] == null)
+                        {
+
+                        }
+                    }
+
+                    
                 }
             };
             Task task = new Task(updateBots, "updateBots");
