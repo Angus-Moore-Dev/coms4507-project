@@ -45,8 +45,8 @@ def XMAS_Attack(targetIP, numPackets, ports=[range(3, 65535)]):
             send(IP_Packet/TCP_Packet, verbose=0)
             print(f'Sent packet to {targetIP}:{port}')
 
-def main():
-    XMAS_Attack('127.0.0.1', 3, [123, 456])
+# def main():
+#     XMAS_Attack('127.0.0.1', 3, [123, 456])
 
-main()
+# main()
 
