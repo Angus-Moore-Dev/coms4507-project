@@ -65,7 +65,7 @@ namespace Coms4507_Project.BotHandling
                         }
                     }
 
-                    if (outputList.Count > 25)
+                    if (outputList.Count > 25) // For the terminal output.
                     {
                         outputList.RemoveAt(0);
                     }
@@ -75,15 +75,17 @@ namespace Coms4507_Project.BotHandling
                     Dictionary<string, string> message = networkHandler.WaitForMessage();
                     JObject jData = JsonConvert.DeserializeObject<JObject>(message["payload"]);
                     Trace.WriteLine(jData.ToString());
-                    
+
                     // All bots provide this information and only respond with ip, id, status, targetIP, port, error, exceptions thrown
                     string ip = jData.GetValue("ip").ToString();
                     string hostID = jData.GetValue("id").ToString();
                     string status = jData.GetValue("status").ToString();
                     string port = message["port"];
+
                     // COMMENT THIS BACK IN WHEN LARRY IS OPERATIONAL AGAIN.
                     //botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
                     outputList.Add(hostID + " :: " + ip + " :: " + status);
+
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;
                     botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp
