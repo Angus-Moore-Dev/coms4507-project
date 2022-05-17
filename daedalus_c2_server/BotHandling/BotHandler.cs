@@ -33,9 +33,13 @@ namespace Coms4507_Project.BotHandling
         public Dictionary<string, string> botIpPortDetails;
         private Dictionary<string, long> botIdUnixTimestamp;
 
+        public List<string> outputList;
+        public int botExceptionsThrown = 0;
+
         public BotHandler(string ip)
         {
             bots = new List<string>();
+            outputList = new List<string>(); // records the output from the bots.
             networkHandler = new NetworkHandler(ip);
             Thread thread = new Thread(Listener);
             thread.Start();
@@ -61,18 +65,24 @@ namespace Coms4507_Project.BotHandling
                         }
                     }
 
+                    if (outputList.Count > 25)
+                    {
+                        outputList.RemoveAt(0);
+                    }
+
                     // We just loop over this over and over and wait for a message
                     Trace.WriteLine("waiting");
                     Dictionary<string, string> message = networkHandler.WaitForMessage();
-
                     JObject jData = JsonConvert.DeserializeObject<JObject>(message["payload"]);
                     Trace.WriteLine(jData.ToString());
-                    // All bots provide this information and only respond with their
+                    
+                    // All bots provide this information and only respond with ip, id, status, targetIP, port, error, exceptions thrown
                     string ip = jData.GetValue("ip").ToString();
                     string hostID = jData.GetValue("id").ToString();
                     string status = jData.GetValue("status").ToString();
                     string port = message["port"];
-
+                    botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
+                    outputList.Add(hostID + " :: " + ip + " :: " + status);
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;
                     botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp

