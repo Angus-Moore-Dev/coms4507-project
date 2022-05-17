@@ -124,7 +124,7 @@ class IcarusBot:
                 attack_type = jsonMsg['attack']
                 target_ip = jsonMsg['targetIP']
                 # These are contained in all packets, irrespective of status/attack/stop call.
-                ports = jsonmsg['ports']
+                ports = jsonMsg['ports']
                 runtime = jsonMsg['runtime']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
@@ -205,7 +205,7 @@ def notification(action):
         body = "I AM DONE ATTACKING. PLEASE IGNORE."
     else:
         title = "ICARUS BOT CALLED OFF"
-        body = "The bot finished it's job"
+        body = "The bot finished its job"
 
     toast.show_toast(
         title,
@@ -218,8 +218,6 @@ def notification(action):
 
 def main():
     bot = IcarusBot()
-    bot.notification(True)
-    bot.start()
 
 
 if __name__ == "__main__":

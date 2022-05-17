@@ -1,6 +1,6 @@
 import random
 from scapy.all import IP, TCP, send
-from utilities import randomIp, randInt
+from utilities import randomIP, randInt
 
 def XMAS_Attack(targetIP, numPackets, ports=[range(3, 65535)]):
     """
