@@ -3,7 +3,7 @@ from scapy.all import IP, TCP, send
 from utilities import randomIP, randInt
 
 
-def XMAS_Attack(targetIP, numPackets, ports=[range(3, 65535)]):
+def XMAS_Attack(targetIP, numPackets, ports):
     """
     XMAS Attack Function
 
