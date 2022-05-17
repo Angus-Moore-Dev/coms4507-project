@@ -42,6 +42,13 @@ namespace Coms4507_Project
             ip = externalIp;
         }
 
+        private void UpdateOnlineStatus()
+        {
+            // TODO: Go through each bot and change the text colour to LawnGreen when online.
+            //      Currently unsure about how to properly do bindings, but I'm sure there's some nifty
+            //      way to do pointer-based stuff, so when the variables update, that's reflected in the program.
+        }
+
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // SELECT SYN_FLOOD TO THE ATTACK TYPE
