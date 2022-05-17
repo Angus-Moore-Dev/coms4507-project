@@ -285,7 +285,7 @@
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="Total Bot Bandwidth" Background="DarkRed" Foreground="White" />
+                <Label Content="Total Bot Bandwidth Available (Mbit/s)" Background="DarkRed" Foreground="White" />
                 <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
                            FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
