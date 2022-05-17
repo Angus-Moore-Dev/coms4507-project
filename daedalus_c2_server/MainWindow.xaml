@@ -268,7 +268,8 @@
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Content="C2 Attack Status" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
+                           FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
             <Grid Grid.Row="1" Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -278,13 +279,14 @@
                 <Label Content="Bot Exceptions Thrown (current session)" Background="DarkRed" Foreground="White" />
                 <TextBlock Grid.Row="1" x:Name="C2_EXCEPTIONS_THROWN" Background="#1f1f1f" Foreground="White" FontSize="24" />
             </Grid>
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="1" Grid.Column="1" Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Label Content="Total Bot Bandwidth" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontSize="24" />
+                <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
+                           FontSize="24" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="DarkRed">

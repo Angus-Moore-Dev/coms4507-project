@@ -124,7 +124,7 @@ class IcarusBot:
             'ip': self.ip,
             'status': self.status,
             'id': self.bot_id,
-            'uploadSpeed': self.uploadBandwidth,
+            'bandwidth': self.uploadBandwidth,
             'runtime': self.attack_runtime,
             'target': self.target_ip
         }
@@ -153,7 +153,7 @@ class IcarusBot:
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
-                        'uploadSpeed': self.uploadBandwidth,
+                        'bandwidth': self.uploadBandwidth,
                         'target': self.target_ip,
                         'error': 'none',
                         'exceptionsThrown': self.exceptionsThrown
@@ -196,7 +196,7 @@ class IcarusBot:
                             'status': self.status,
                             'id': self.bot_id,
                             'runtime': self.attack_runtime,
-                            'uploadSpeed': self.uploadBandwidth,
+                            'bandwidth': self.uploadBandwidth,
                             'target': self.target_ip,
                             'error': 'failed_starting_attack',
                             'exceptionsThrown': self.exceptionsThrown
