@@ -23,6 +23,7 @@ namespace Coms4507_Project
         BotHandler botHandler;
         private string ip;
         private string attackType;
+        private string attackStatus = "IDLE";
         private BrushConverter bc = new BrushConverter();
         List<string> listOfAllBots;
         private static readonly List<string> allBots = new List<string>()
@@ -86,6 +87,12 @@ namespace Coms4507_Project
                     {
                         Thread.Sleep(250);
                         Trace.WriteLine("UPDATING BOT FOR THE UI");
+
+                        // Update attack status
+                        Dispatcher.Invoke(() =>
+                        {
+                            C2_ATTACK_STATUS.Text = attackStatus;
+                        });
 
                         // Prints the terminal output from the bots to the commandline
                         Dispatcher.Invoke(() =>
@@ -230,7 +237,8 @@ namespace Coms4507_Project
             attackMessage.Add("ports", "[" + ports.Trim() + "]");
             attackMessage.Add("runtime", runtime);
 
-            Thread.Sleep(1000);
+            attackStatus = "ATTACK";
+
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
             ATTACK_BUTTON.Content = "STOP ATTACK";
         }

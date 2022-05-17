@@ -81,7 +81,8 @@ namespace Coms4507_Project.BotHandling
                     string hostID = jData.GetValue("id").ToString();
                     string status = jData.GetValue("status").ToString();
                     string port = message["port"];
-                    botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
+                    // COMMENT THIS BACK IN WHEN LARRY IS OPERATIONAL AGAIN.
+                    //botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
                     outputList.Add(hostID + " :: " + ip + " :: " + status);
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;

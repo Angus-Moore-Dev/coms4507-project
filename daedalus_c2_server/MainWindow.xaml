@@ -289,11 +289,9 @@
         </Grid>
         <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Foreground="White" Content="Active Attack Map Dashboard" Background="DarkRed" />
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="0" Background="DarkRed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -301,7 +299,7 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="TARGET STATUS" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Label Grid.Column="0" Content="TARGET STATUS" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="DemiBold"/>
                 <Label Grid.Column="1" x:Name="TARGET_STATUS"  Content="N/A" FontSize="60" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             </Grid>
         </Grid>
