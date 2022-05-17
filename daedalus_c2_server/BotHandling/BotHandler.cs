@@ -35,7 +35,7 @@ namespace Coms4507_Project.BotHandling
         private Dictionary<string, float> botIdBandwidth; // botID -> upload speed (message["bandwidth"])
         private float totalBandwidth;
         public List<string> outputList;
-        public int botExceptionsThrown = 0;
+        private int botExceptionsThrown = 0;
 
         public BotHandler(string ip)
         {
@@ -54,6 +54,11 @@ namespace Coms4507_Project.BotHandling
         public float GetTotalBandwidth()
         {
             return totalBandwidth;
+        }
+
+        public int GetExceptionsThrown()
+        {
+            return botExceptionsThrown;
         }
 
         private void Listener()
@@ -91,7 +96,10 @@ namespace Coms4507_Project.BotHandling
                     string port = message["port"];
 
                     // COMMENT THIS BACK IN WHEN LARRY IS OPERATIONAL AGAIN.
-                    //botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
+                    if (jData.GetValue("exceptionsThrown") != null)
+                    {
+                        botExceptionsThrown += int.Parse(jData.GetValue("exceptionsThrown").ToString());
+                    }
                     outputList.Add(hostID + " :: " + ip + " :: " + status);
 
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
@@ -107,6 +115,7 @@ namespace Coms4507_Project.BotHandling
                         }
                         totalBandwidth = tempBandwidthVal; // Re-assign to then be called by the ViewModel
                     }
+  
                     botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp
                     Trace.WriteLine(botIpPortDetails.ToString());
                     /* 

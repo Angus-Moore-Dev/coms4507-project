@@ -93,6 +93,7 @@ namespace Coms4507_Project
                         {
                             C2_ATTACK_STATUS.Text = attackStatus;
                             C2_TOTAL_BANDWIDTH.Text = $"{botHandler.GetTotalBandwidth()}";
+                            C2_EXCEPTIONS_THROWN.Text = $"{botHandler.GetExceptionsThrown()}";
                         });
 
                         // Prints the terminal output from the bots to the commandline
