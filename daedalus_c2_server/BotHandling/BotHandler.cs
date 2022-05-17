@@ -30,7 +30,8 @@ namespace Coms4507_Project.BotHandling
         public string attackType{ get; set; }
         public string requestType = "status";
 
-        private Dictionary<string, string> botIpPortDetails;
+        public Dictionary<string, string> botIpPortDetails;
+        private Dictionary<string, long> botIdUnixTimestamp;
 
         public BotHandler(string ip)
         {
@@ -39,6 +40,7 @@ namespace Coms4507_Project.BotHandling
             Thread thread = new Thread(Listener);
             thread.Start();
             botIpPortDetails = new Dictionary<string, string>();
+            botIdUnixTimestamp = new Dictionary<string, long>();
             attackType = "none";
         }
 
@@ -46,8 +48,19 @@ namespace Coms4507_Project.BotHandling
         {
             while(true)
             {
+                
                 try
                 {
+                    // We check that if any bot in the list hasn't responded in 5 seconds, they are considered offline.
+                    foreach (string botName in botIpPortDetails.Keys)
+                    {
+                        if (DateTimeOffset.Now.ToUnixTimeSeconds() - botIdUnixTimestamp[botName] > 5)
+                        {
+                            _ = botIpPortDetails.Remove(botName);
+                            _ = botIdUnixTimestamp.Remove(botName);
+                        }
+                    }
+
                     // We just loop over this over and over and wait for a message
                     Trace.WriteLine("waiting");
                     Dictionary<string, string> message = networkHandler.WaitForMessage();
@@ -62,6 +75,7 @@ namespace Coms4507_Project.BotHandling
 
                     // this is where the bots are assigned their IDs. It will be reassigned whenever a new IP is created.
                     botIpPortDetails[hostID] = ip + "::" + port;
+                    botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp
                     Trace.WriteLine(botIpPortDetails.ToString());
                     /* 
                      * 

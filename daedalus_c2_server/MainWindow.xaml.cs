@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using Coms4507_Project.BotHandling;
 /**
@@ -23,7 +25,6 @@ namespace Coms4507_Project
             InitializeComponent();
             // All custom stuff here.
             Initialise();
-
             botHandler = new BotHandler(ip);
             attackType = "NONE";
         }
@@ -47,6 +48,20 @@ namespace Coms4507_Project
             // TODO: Go through each bot and change the text colour to LawnGreen when online.
             //      Currently unsure about how to properly do bindings, but I'm sure there's some nifty
             //      way to do pointer-based stuff, so when the variables update, that's reflected in the program.
+            Action<object> updateBots = (object obj) =>
+            {
+                while(true)
+                {
+                    // Go through and invoke the dispatcher for update on the colours.
+                    foreach (string botName in botHandler.botIpPortDetails.Keys)
+                    {
+                        // TODO: change the colour if it equals each one. Currently I have no
+                        // way of dynamically doing this, but if there is a way I would greatly appreciate it.
+                    }
+                }
+            };
+            Task task = new Task(updateBots, "updateBots");
+            task.Start();
         }
 
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
