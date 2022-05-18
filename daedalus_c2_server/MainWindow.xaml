@@ -314,6 +314,7 @@
                 <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="N/A" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
+        <!--Bottom panel area with disclosures and the botname.-->
         <Grid Grid.Row="3" Grid.Column="0">
             <StackPanel Orientation="Vertical">
                 <Label Content="COMS4507 Project 2022" FontSize="24" Foreground="White" Background="#250000" FontWeight="DemiBold"/>
