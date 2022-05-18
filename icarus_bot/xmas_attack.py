@@ -36,7 +36,7 @@ def XMAS_Attack(targetIP, numPackets, ports):
 
             # Send spoofed XMAS Tree Packet
             send(IP_Packet/TCP_Packet, verbose=0)
-            print(f'Sent packet to {targetIP}:{port}')
+            #print(f'Sent packet to {targetIP}:{port}')
 
 # def main():
 #     XMAS_Attack('127.0.0.1', 3, [123, 456])

