@@ -266,9 +266,9 @@ class IcarusBot:
                             'exceptionsThrown': self.exceptionsThrown
                         }
                         response = json.dumps(response)
-                    except Exception:
+                    except Exception as ex:
                         self.exceptionsThrown += 1
-                        print("ERROR EXECUTING ATTACK")
+                        print("ERROR EXECUTING ATTACK", ex)
                         response = {
                             'ip': self.ip,
                             'status': self.status,
