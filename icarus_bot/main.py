@@ -292,8 +292,8 @@ class IcarusBot:
                 # the server has lagged out
                 print("timeout")
                 return
-            except Exception:
-                print("EXCEPTION")
+            except Exception as ex:
+                print("EXCEPTION", ex)
                 self.exceptionsThrown += 1
                 return
 
