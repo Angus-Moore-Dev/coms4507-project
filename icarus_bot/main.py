@@ -271,6 +271,7 @@ class IcarusBot:
                             'error': 'none',
                             'exceptionsThrown': self.exceptionsThrown
                         }
+                        response = json.dumps(response)
                     except Exception:
                         self.exceptionsThrown += 1
                         print("ERROR EXECUTING ATTACK")
@@ -284,6 +285,7 @@ class IcarusBot:
                             'error': 'failed_starting_attack',
                             'exceptionsThrown': self.exceptionsThrown
                         }
+                        response = json.dumps(response)
 
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)
