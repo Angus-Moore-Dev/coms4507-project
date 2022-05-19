@@ -6,10 +6,17 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:local="clr-namespace:Coms4507_Project"
                  Title=""
-                 Width="1600"
-                 Height="900"
+                 FontFamily="C:/Windows/Fonts/#Bitsumishi Regular"
+                 Width="1920"
+                 Height="1080"
+                 
                  WindowStartupLocation="CenterScreen"
                  mc:Ignorable="d">
+    <mah:MetroWindow.Resources>
+        <Style TargetType="{x:Type Button}">
+            
+        </Style>
+    </mah:MetroWindow.Resources>
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Image Source="./images/logoTopLeft.png"></Image>
@@ -29,7 +36,7 @@
             <ColumnDefinition Width="107*"/>
         </Grid.ColumnDefinitions>
         <!--Academic Disclaimer-->
-        <Label Content="ACADEMIC USE ONLY" Foreground="White" FontSize="24" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
+        <Label Content="ACADEMIC USE ONLY" Foreground="White" FontSize="30" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
         <!--Bot Status-->
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -38,26 +45,169 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Border BorderBrush="DarkRed" BorderThickness="2px" Background="DarkRed">
-                <TextBlock Grid.Row="0" FontFamily="Arial Black" FontSize="24" Padding="100px 0 0 0" Foreground="White" VerticalAlignment="Center" FontStretch="Condensed">
+                <TextBlock Grid.Row="0"  FontSize="24" Padding="100px 0 0 0" Foreground="White" VerticalAlignment="Center" FontStretch="Condensed">
                 Bot Status
                 </TextBlock>
             </Border>
 
-            <StackPanel Grid.Row="1" x:Name="BOT_STATUS_ROW_1">
-
-            </StackPanel>
-            <StackPanel Grid.Row="2" x:Name="BOT_STATUS_ROW_2">
-
-            </StackPanel>
-            <StackPanel Grid.Row="3" x:Name="BOT_STATUS_ROW_3">
-
-            </StackPanel>
-            <StackPanel Grid.Row="4" x:Name="BOT_STATUS_ROW_4">
-
-            </StackPanel>
+            <Grid Grid.Row="1" x:Name="BOT_STATUS_ROW_1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="4">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
+                    <Label Content="ULTRASTEED" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                    <Label x:Name="ULTRASTEED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="ANGRYORACLE" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="ANGRYORACLE_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="ISLANDOASIS" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="ISLANDOASIS_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="ARKFOLLOWER" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="ARKFOLLOWER_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="2" x:Name="BOT_STATUS_ROW_2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="4">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
+                        <Label Content="ENDUESCALLOP" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="ENDUESCALLOP_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="MOTHBED" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="MOTHBED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="MAESTRO" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="MAESTRO_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="DECKLEAK" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="DECKLEAK_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="3" x:Name="BOT_STATUS_ROW_3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="4">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
+                        <Label Content="DIXIE-IX" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="DIXIE_IX_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="CONTRASTEED" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="CONTRASTEED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="JETMOSES" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="JETMOSES_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="DESPERADO-XIX" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="DESPERADO_XIX_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="4" x:Name="BOT_STATUS_ROW_4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="4">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
+                        <Label Content="GENESISJEEP" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="GENESISJEEP_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="RESERVEPEARL" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="RESERVEPEARL_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="FRUGALSCALLOP" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="FRUGALSCALLOP_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="GILGAMESHBED" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="GILGAMESHBED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="5" x:Name="BOT_STATUS_ROW_5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="4">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
+                        <Label Content="SLAW-VIII" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="SLAW_VIII_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="ATLAS-XV" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="ATLAS_XV_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
+                    <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
+                        <Label Content="RAGESHOP" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label x:Name="RAGESHOP_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </Grid>
         <!--Attack panel-->
         <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
@@ -70,28 +220,35 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Vertical">
-                <Button x:Name="SYN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SYN FLOOD" Height="50" FontSize="14" Click="SYN_FLOOD_Click"/>
-                <Button x:Name="XMAS_FLOOD" Background="#0e0e0e" Foreground="White" Content="XMAS FLOOD" Height="50" FontSize="14" Click="XMAS_FLOOD_Click"/>
-                <Button x:Name="PING_FLOOD" Background="#0e0e0e" Foreground="White" Content="PING FLOOD" Height="50" FontSize="14" Click="PING_FLOOD_Click"/>
-                <Button x:Name="UDP_FLOOD" Background="#0e0e0e" Foreground="White" Content="UDP FLOOD" Height="50" FontSize="14" Click="UDP_FLOOD_Click"/>
-                <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="14" Click="SCAN_FLOOD_Click"/>
-                <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="14" Click="BANDWIDTH_DDOS_Click"/>
+                <Button x:Name="SYN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SYN FLOOD" Height="50" FontSize="18" Click="SYN_FLOOD_Click"/>
+                <Button x:Name="XMAS_FLOOD" Background="#0e0e0e" Foreground="White" Content="XMAS FLOOD" Height="50" FontSize="18" Click="XMAS_FLOOD_Click"/>
+                <Button x:Name="PING_FLOOD" Background="#0e0e0e" Foreground="White" Content="PING FLOOD" Height="50" FontSize="18" Click="PING_FLOOD_Click"/>
+                <Button x:Name="UDP_FLOOD" Background="#0e0e0e" Foreground="White" Content="UDP FLOOD" Height="50" FontSize="18" Click="UDP_FLOOD_Click"/>
+                <Button x:Name="SCAN_FLOOD" Background="#0e0e0e" Foreground="White" Content="SCAN FLOOD" Height="50" FontSize="18" Click="SCAN_FLOOD_Click"/>
+                <Button x:Name="BANDWIDTH_DDOS" Background="#0e0e0e" Foreground="White" Content="BANDWIDTH DDOS" Height="50" FontSize="18" Click="BANDWIDTH_DDOS_Click"/>
                 <!--IP Address section-->
-                <Label Content="IP Address" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
-                <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
-                <Label Content="Ports to Attack (comma separated)" Foreground="White" FontSize="10" VerticalContentAlignment="Bottom" />
+                <Label Content="IP Address" Foreground="White" FontSize="14" VerticalContentAlignment="Bottom"/>
+                <TextBox x:Name="IP_ADDRESS" Foreground="White" Background="#250000" FontSize="14" Padding="10px"/>
+                <Label Content="Ports to Attack (comma separated)" Foreground="White" FontSize="14" VerticalContentAlignment="Bottom"/>
                 <TextBox x:Name="PORTS" Foreground="White" Background="#250000" FontSize="14" Padding="10px" />
             </StackPanel>
-            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" Click="ATTACK_BUTTON_Click" />
+            <Button x:Name="ATTACK_BUTTON" Grid.Row="1" Foreground="White" Background="Red" Content="START ATTACK" FontSize="30" Click="ATTACK_BUTTON_Click"/>
             <Grid Grid.Column="1" Grid.RowSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="30"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
                 <Label Grid.Row="0" Content="Terminal Output" Foreground="White" FontSize="24" FontWeight="Bold" Background="DarkRed" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"/>
-                <TextBlock Grid.Row="1" x:Name="TERMINAL_OUTPUT_BOTS" Background="#250000" VerticalAlignment="Stretch"/>
+                <TextBlock FontFamily="Arial" Grid.Row="1" x:Name="TERMINAL_OUTPUT_BOTS" Background="#250000" TextAlignment="Center"
+                           VerticalAlignment="Stretch" Foreground="LightGray" FontSize="20"
+                           FontWeight="DemiBold"/>
             </Grid>
         </Grid>
+        
+        
         <!--IP and other personal C2 data.-->
         <Grid Grid.Row="2" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -107,56 +264,62 @@
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="C2 IP Address (Your IP)" Background="DarkRed" Foreground="White" />
+                <Label Content="C2 IP Address (Your IP)" Background="DarkRed" Foreground="White" FontSize="18"/>
                 <Grid Grid.Row="1" Background="#1f1f1f">
-                    <Label x:Name="C2_SERVER_IP" Background="#1f1f1f" Foreground="White" FontSize="36" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Label x:Name="C2_SERVER_IP" Background="#1f1f1f" Foreground="White"
+                           FontSize="48" FontWeight="DemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Grid>
-
             </Grid>
-            <Grid Grid.Row="0" Grid.Column="1">
+            <Grid Grid.Row="0" Grid.Column="1" Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="C2 Attack Status" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontSize="24"/>
+                <Label Content="C2 Attack Status" Background="DarkRed" Foreground="White" FontSize="18"/>
+                <TextBlock Grid.Row="1" x:Name="C2_ATTACK_STATUS" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
+                           FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
-            <Grid Grid.Row="1" Grid.Column="0">
+            <Grid Grid.Row="1" Grid.Column="0" Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="Bot Exceptions Thrown" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_EXCEPTIONS_THROWN" Background="#1f1f1f" Foreground="White" FontSize="24" />
+                <Label Content="Bot Exceptions Thrown (current session)" Background="DarkRed" Foreground="White" FontSize="18"/>
+                <TextBlock Grid.Row="1" x:Name="C2_EXCEPTIONS_THROWN" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
+                           FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" />
             </Grid>
-            <Grid Grid.Row="1" Grid.Column="1">
+            <Grid Grid.Row="1" Grid.Column="1" Background="#1f1f1f">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
-                <Label Content="Total Bot Bandwidth" Background="DarkRed" Foreground="White" />
-                <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontSize="24" />
+                <Label Content="Total Bot Bandwidth Available (Mbit/s)" Background="DarkRed" Foreground="White" FontSize="18"/>
+                <TextBlock Grid.Row="1" x:Name="C2_TOTAL_BANDWIDTH" Background="#1f1f1f" Foreground="White" FontWeight="DemiBold"
+                           FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
-        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="DarkRed">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-            <Label Grid.Row="0" Foreground="White" Content="Active Attack Map Dashboard" Background="DarkRed" />
-            <StackPanel Grid.Row="1" x:Name="ACTIVE_ATTACK_MAP_ROW_1" Orientation="Horizontal" />
-            <StackPanel Grid.Row="2" x:Name="ACTIVE_ATTACK_MAP_ROW_2" Orientation="Horizontal" />
-            <StackPanel Grid.Row="3" x:Name="ACTIVE_ATTACK_MAP_ROW_3" Orientation="Horizontal" />
-            <StackPanel Grid.Row="4" x:Name="ACTIVE_ATTACK_MAP_ROW_4" Orientation="Horizontal" />
+            <Grid Grid.Row="0" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="TARGET STATUS" Foreground="White" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="DemiBold"/>
+                <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="N/A" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
         </Grid>
+        <!--Bottom panel area with disclosures and the botname.-->
         <Grid Grid.Row="3" Grid.Column="0">
             <StackPanel Orientation="Vertical">
                 <Label Content="COMS4507 Project 2022" FontSize="24" Foreground="White" Background="#250000" FontWeight="DemiBold"/>
-                <Label Content="Group Members: [Angus Moore, Larry Bain, Sam Guarrera, Lachie Daly]" FontSize="18" Foreground="White"/>
-                <Label Content="This C2 Server is for academic purposes only." FontSize="24" Foreground="White"/>
+                <Label Content="Group Members: Angus Moore, Larry Bain, Sam Guarrera, Lachlan Daly" FontSize="18" Foreground="White"/>
+                <Label Content="This C2 Server is for academic purposes only." FontSize="18" Foreground="White"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
