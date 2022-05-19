@@ -277,15 +277,18 @@ namespace Coms4507_Project
         /// <param name="e"></param>
         private void KILL_BOTS_Click(object sender, RoutedEventArgs e)
         {
-            // THIS WILL ISSUE THE BOTS TO PERMANENTLY KILL ALL BOTS ON THE NETWORK.
-            foreach (string botName in botHandler.botIpPortDetails.Keys)
+            if (MessageBox.Show("Are you sure you want to kill all bots?", "DELETE ALL BOTS", MessageBoxButton.YesNo)
+                == MessageBoxResult.Yes)
             {
-                Label label = FindName($"{botName}_STATUS") as Label;
-                label.Content = "DEAD";
-                label.Foreground = new SolidColorBrush(Colors.Orange);
-            }
+                // THIS WILL ISSUE THE BOTS TO PERMANENTLY KILL ALL BOTS ON THE NETWORK.
+                foreach (string botName in botHandler.botIpPortDetails.Keys)
+                {
+                    Label label = FindName($"{botName}_STATUS") as Label;
+                    label.Content = "DEAD";
+                    label.Foreground = new SolidColorBrush(Colors.Orange);
+                }
 
-            Dictionary<string, string> attackMessage = new Dictionary<string, string>
+                Dictionary<string, string> attackMessage = new Dictionary<string, string>
             {
                 { "request", "kill" },
                 { "attack", "none" },
@@ -293,7 +296,9 @@ namespace Coms4507_Project
                 { "ports", "none" },
                 { "runtime", "*" }
             };
-            botHandler.KILL(JObject.FromObject(attackMessage).ToString());
+                botHandler.KILL(JObject.FromObject(attackMessage).ToString());
+            }
+            // Otherwise we just ignore because they have said no.
         }
     }
 }
