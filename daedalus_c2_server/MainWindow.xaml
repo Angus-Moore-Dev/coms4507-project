@@ -62,25 +62,25 @@
                 </Grid.ColumnDefinitions>
                 <Border BorderBrush="Black" BorderThickness="4">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
-                    <Label Content="ULTRASTEED" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ULTRASTEED" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                     <Label x:Name="ULTRASTEED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                 </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ANGRYORACLE" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ANGRYORACLE" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ANGRYORACLE_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ISLANDOASIS" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ISLANDOASIS" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ISLANDOASIS_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ARKFOLLOWER" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ARKFOLLOWER" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ARKFOLLOWER_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
