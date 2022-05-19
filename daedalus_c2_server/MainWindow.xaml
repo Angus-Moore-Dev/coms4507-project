@@ -31,12 +31,11 @@
             <RowDefinition Height="0.25*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="796*"></ColumnDefinition>
-            <ColumnDefinition Width="690*"></ColumnDefinition>
-            <ColumnDefinition Width="107*"/>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--Academic Disclaimer-->
-        <Label Content="ACADEMIC USE ONLY" Foreground="White" FontSize="30" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
+        <Label Content="ACADEMIC USE ONLY (University of Queensland)" Foreground="White" FontSize="18" VerticalContentAlignment="Center" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
         <!--Bot Status-->
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -47,7 +46,6 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-
             <Border BorderBrush="DarkRed" BorderThickness="2px" Background="DarkRed">
                 <TextBlock Grid.Row="0"  FontSize="24" Padding="100px 0 0 0" Foreground="White" VerticalAlignment="Center" FontStretch="Condensed">
                 Bot Status
