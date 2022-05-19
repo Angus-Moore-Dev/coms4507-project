@@ -226,5 +226,17 @@ namespace Coms4507_Project.BotHandling
 
         }
 
+        public void STOP(string attackData)
+        {
+            foreach (string ipPort in botIpPortDetails.Values.ToArray())
+            {
+                string ip = ipPort.Split(new string[] { "::" }, StringSplitOptions.None)[0];
+                string port = ipPort.Split(new string[] { "::" }, StringSplitOptions.None)[1];
+
+                // Now we just go ahead and distribute the attack message.
+                networkHandler.SendMessage(attackData, ip, port);
+            }
+        }
+
     }
 }

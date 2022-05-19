@@ -311,7 +311,7 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="TARGET STATUS" Foreground="White" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="DemiBold"/>
-                <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="N/A" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="ONLINE" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
         <!--Bottom panel area with disclosures and the botname.-->

