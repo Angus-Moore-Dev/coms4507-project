@@ -240,10 +240,9 @@ namespace Coms4507_Project
 
                 attackStatus = "ATTACK";
                 botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
-
+                // Modify the ViewModel
                 TARGET_STATUS.Content = "UNDER ATTACK!";
                 TARGET_STATUS.Foreground = new SolidColorBrush(Colors.Orange);
-
                 ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
                 ATTACK_BUTTON.Content = "STOP ATTACK";
             } else
@@ -270,6 +269,31 @@ namespace Coms4507_Project
             
         }
 
-        
+
+        /// <summary>
+        /// This is the final nail in the coffin. This will kill all active bots.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KILL_BOTS_Click(object sender, RoutedEventArgs e)
+        {
+            // THIS WILL ISSUE THE BOTS TO PERMANENTLY KILL ALL BOTS ON THE NETWORK.
+            foreach (string botName in botHandler.botIpPortDetails.Keys)
+            {
+                Label label = FindName($"{botName}_STATUS") as Label;
+                label.Content = "DEAD";
+                label.Foreground = new SolidColorBrush(Colors.Orange);
+            }
+
+            Dictionary<string, string> attackMessage = new Dictionary<string, string>
+            {
+                { "request", "kill" },
+                { "attack", "none" },
+                { "targetIP", "none" },
+                { "ports", "none" },
+                { "runtime", "*" }
+            };
+            botHandler.KILL(JObject.FromObject(attackMessage).ToString());
+        }
     }
 }

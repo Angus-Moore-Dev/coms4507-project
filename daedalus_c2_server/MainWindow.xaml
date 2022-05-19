@@ -35,7 +35,8 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--Academic Disclaimer-->
-        <Label Content="ACADEMIC USE ONLY (University of Queensland)" Foreground="White" FontSize="18" VerticalContentAlignment="Center" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
+        <Label Content="ACADEMIC USE ONLY (University of Queensland)" Foreground="White" FontSize="18" VerticalContentAlignment="Center"  FontWeight="ExtraBlack" Grid.Row="0" Grid.Column="0"/>
+        <Button x:Name="KILL_BOTS" Content="KILL ALL BOTS (only click when done)" Foreground="White" Background="DarkBlue" FontSize="30" VerticalContentAlignment="Center" FontWeight="ExtraBlack" Grid.Row="0" Grid.Column="1" Click="KILL_BOTS_Click"/>
         <!--Bot Status-->
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
