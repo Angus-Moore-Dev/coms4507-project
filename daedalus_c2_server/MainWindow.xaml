@@ -31,12 +31,12 @@
             <RowDefinition Height="0.25*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="796*"></ColumnDefinition>
-            <ColumnDefinition Width="690*"></ColumnDefinition>
-            <ColumnDefinition Width="107*"/>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--Academic Disclaimer-->
-        <Label Content="ACADEMIC USE ONLY" Foreground="White" FontSize="30" FontWeight="ExtraBlack" HorizontalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Margin="664,0,557.5,0" />
+        <Label Content="ACADEMIC USE ONLY (University of Queensland)" Foreground="White" FontSize="18" VerticalContentAlignment="Center"  FontWeight="ExtraBlack" Grid.Row="0" Grid.Column="0"/>
+        <Button x:Name="KILL_BOTS" Content="KILL ALL BOTS (only click when done)" Foreground="White" Background="DarkBlue" FontSize="30" VerticalContentAlignment="Center" FontWeight="ExtraBlack" Grid.Row="0" Grid.Column="1" Click="KILL_BOTS_Click"/>
         <!--Bot Status-->
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
@@ -47,7 +47,6 @@
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
-
             <Border BorderBrush="DarkRed" BorderThickness="2px" Background="DarkRed">
                 <TextBlock Grid.Row="0"  FontSize="24" Padding="100px 0 0 0" Foreground="White" VerticalAlignment="Center" FontStretch="Condensed">
                 Bot Status
@@ -63,25 +62,25 @@
                 </Grid.ColumnDefinitions>
                 <Border BorderBrush="Black" BorderThickness="4">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" Grid.Column="0" VerticalAlignment="Center">
-                    <Label Content="ULTRASTEED" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ULTRASTEED" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                     <Label x:Name="ULTRASTEED_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                 </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="1">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ANGRYORACLE" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ANGRYORACLE" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ANGRYORACLE_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="2">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ISLANDOASIS" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ISLANDOASIS" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ISLANDOASIS_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="4" Grid.Column="3">
                     <StackPanel Orientation="Vertical" Background="#0e0e0e" Width="Auto" VerticalAlignment="Center">
-                        <Label Content="ARKFOLLOWER" Foreground="White" FontSize="18" FontWeight="Bold" HorizontalContentAlignment="Center"/>
+                        <Label Content="ARKFOLLOWER" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalContentAlignment="Center"/>
                         <Label x:Name="ARKFOLLOWER_STATUS" Foreground="Red" FontWeight="Heavy" FontSize="36" Content="OFFLINE" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                     </StackPanel>
                 </Border>
@@ -311,7 +310,7 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" Content="TARGET STATUS" Foreground="White" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="DemiBold"/>
-                <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="N/A" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Grid.Column="1" x:Name="TARGET_STATUS" Foreground="White"  Content="ONLINE" FontSize="48" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
         </Grid>
         <!--Bottom panel area with disclosures and the botname.-->

