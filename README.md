@@ -1,4 +1,4 @@
-# coms4507-project
+# COMS4507-project
 A project for COMS4507 @ UQ (Advanced Topics in Security).
 
 ## Daedalus/Blackwall C2 Server
